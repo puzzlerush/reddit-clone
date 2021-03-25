@@ -10,8 +10,12 @@ const getPublicUser = (user) => {
 }
 
 router.get('/', async (req, res) => {
-  const { rows } = await query('select * from users')
-  res.send(rows.map((user) => getPublicUser(user)))
+  try {
+    const { rows } = await query('select * from users')
+    res.send(rows.map((user) => getPublicUser(user)))
+  } catch (e) {
+    res.status(500).send({ error: e.message })
+  }
 })
 
 router.get('/:id', async (req, res) => {
@@ -28,7 +32,7 @@ router.get('/:id', async (req, res) => {
     }
     res.send(getPublicUser(user))
   } catch (e) {
-    res.status(400).send({ error: e.message })
+    res.status(500).send({ error: e.message })
   }
 })
 
@@ -90,7 +94,7 @@ router.put('/:id', async (req, res) => {
 
     const { rows } = await query(updateUserStatement, [...updateFieldsParams, id])
     const user = rows[0]
-    
+
     if (!user) {
       return res.status(404).send({ error: 'Could not find user with that id' })
     }
