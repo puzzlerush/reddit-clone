@@ -2,6 +2,7 @@ const express = require('express')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { query } = require('../db')
+const { updateTableRow } = require('../db/utils')
 const auth = require('../middleware/auth')
 
 const router = express.Router()
@@ -125,7 +126,7 @@ router.post('/logout', auth, async (req, res) => {
   const { rows: [user] } = await query(setUserTokensStatement, [tokens, req.user.id])
   delete req.user
   delete req.token
-  res.send(user);
+  res.send(user)
 })
 
 router.post('/logoutAll', auth, async (req, res) => {
@@ -143,40 +144,14 @@ router.post('/logoutAll', auth, async (req, res) => {
 router.put('/', auth, async (req, res) => {
   try {
     const allowedUpdates = ['username', 'password']
-    const updates = Object.keys(req.body)
-    const validUpdate = updates.every((update) => allowedUpdates.includes(update))
-    if (!validUpdate) {
-      return res.status(400).send()
+    if (req.body.password !== undefined) {
+      req.body.password = await bcrypt.hash(req.body.password, 10)
     }
-
-    const setFieldsClause = updates.map(
-      (update, index) => `${update} = $${index + 1}`
-    ).join(', ')
-
-    const updateFieldsParams = []
-    for (const update of updates) {
-      if (update === 'password') {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        updateFieldsParams.push(hashedPassword)
-      } else {
-        updateFieldsParams.push(req.body[update])
-      }
-    }
-
-    const updateUserStatement = `
-      update users
-      set ${setFieldsClause}
-      where id = $${updateFieldsParams.length + 1}
-      returning *
-    `
-
-    const { rows: [user] } = await query(updateUserStatement, [...updateFieldsParams, req.user.id])
-
-    if (!user) {
-      return res.status(404).send({ error: 'Could not find user with that id' })
-    }
+    const user = await updateTableRow('users', req.user.id, allowedUpdates, req.body)
+   
     res.send(getPublicUser(user))
   } catch (e) {
+    console.log(e)
     res.status(400).send({ error: e.message })
   }
 })
