@@ -7,7 +7,7 @@ module.exports = async (req, res, next) => {
     const { id } = await jwt.verify(token, process.env.JWT_SECRET)
     const { rows: [user] } = await query('select * from users where id = $1', [id])
     if (!user.tokens.includes(token)) {
-      throw new Error();
+      throw new Error()
     }
     req.user = user
     req.token = token

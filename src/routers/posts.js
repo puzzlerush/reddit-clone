@@ -60,7 +60,7 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(401).send({ error: 'You must be the post creator to edit it' })
     }
 
-    let allowedUpdates;
+    let allowedUpdates
     switch (post.type) {
       case 'text':
         allowedUpdates = ['title', 'body']

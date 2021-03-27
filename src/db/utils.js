@@ -17,7 +17,7 @@ const updateTableRow = async (table, id, allowedUpdates, updatesObj) => {
     (updateField, index) => `${updateField} = $${index + 1}`
   ).join(', ')
 
-  const updateFieldsParams = [];
+  const updateFieldsParams = []
   updateFields.forEach((updateField) => {
     updateFieldsParams.push(updatesObj[updateField])
   })

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare-test-data": "env-cmd -f ./config/dev.env node src/db/prepare-test-data.js"
   },
   "author": "",
   "license": "ISC",
