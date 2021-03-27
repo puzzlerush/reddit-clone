@@ -7,6 +7,13 @@ create table users(
   updated_at timestamptz default now()
 );
 
+create table subreddits(
+  id serial primary key,
+  name varchar(255) not null unique,
+  description text,
+  created_at timestamptz default now()
+);
+
 create type post_type as enum ('text', 'link');
 
 create table posts(
@@ -14,12 +21,17 @@ create table posts(
   type post_type not null,
   title varchar(255) not null,
   body text,
-  author_id int, 
+  author_id int,
+  subreddit_id int not null,
   created_at timestamptz default now(),
   updated_at timestamptz default now(),
   constraint fk_author
     foreign key(author_id)
       references users(id)
+      on delete set null,
+  constraint fk_subreddit
+    foreign key(subreddit_id)
+      references subreddits(id)
       on delete set null
 );
 
