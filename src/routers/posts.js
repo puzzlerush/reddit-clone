@@ -80,4 +80,25 @@ router.put('/:id', auth, async (req, res) => {
   }
 })
 
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const { id } = req.params
+    const selectPostStatement = `select * from posts where id = $1`
+    const { rows: [post] } = await query(selectPostStatement, [id])
+    
+    if (!post) {
+      return res.status(404).send({ error: 'Could not find post with that id' })  
+    }
+    if (post.author_id !== req.user.id) {
+      return res.status(401).send({ error: 'You must be the post creator to delete it' })
+    }
+
+    const deletePostStatement = `delete from posts where id = $1 returning *`
+    const { rows: [deletedPost] } = await query(deletePostStatement, [id])
+    res.send(deletedPost)
+  } catch (e) {
+    res.status(400).send({ error: e.message })
+  }
+}) 
+
 module.exports = router

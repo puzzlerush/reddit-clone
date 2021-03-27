@@ -22,3 +22,25 @@ create table posts(
       references users(id)
       on delete set null
 );
+
+create or replace function update_updated_at_column()
+  returns trigger
+  language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$
+
+create trigger update_users_updated_at
+  before update
+  on users
+  for each row
+    execute procedure update_updated_at_column();
+
+create trigger update_posts_updated_at
+  before update
+  on posts
+  for each row
+    execute procedure update_updated_at_column();
