@@ -14,6 +14,21 @@ create table subreddits(
   created_at timestamptz default now()
 );
 
+create table moderators(
+  user_id int not null,
+  subreddit_id int not null,
+  primary key (user_id, subreddit_id),
+  created_at timestamptz default now(),
+  constraint fk_user
+    foreign key(user_id)
+      references users(id)
+      on delete cascade,
+  constraint fk_subreddit
+    foreign key(subreddit_id)
+      references subreddits(id)
+      on delete cascade
+);
+
 create type post_type as enum ('text', 'link');
 
 create table posts(
