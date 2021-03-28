@@ -68,8 +68,12 @@ router.post('/', async (req, res) => {
       values($1, $2)
       returning *
     `
-
-    const { rows } = await query(insertUserStatement, [username, hashedPassword])
+    let rows
+    try {
+      ({ rows } = await query(insertUserStatement, [username, hashedPassword]))
+    } catch (e) {
+      res.status(409).send({ error: 'Username is already taken' })
+    }
     
     const { user, token } = await addToken(rows[0].id)
 
@@ -144,6 +148,14 @@ router.post('/logoutAll', auth, async (req, res) => {
 router.put('/', auth, async (req, res) => {
   try {
     const allowedUpdates = ['username', 'password']
+    if (req.body.username !== undefined) {
+      const { rows } = await query(`select * from users where username = $1`, [
+        req.body.username
+      ])
+      if (rows.length > 0) {
+        return res.status(409).send({ error: 'Username is already taken' })
+      }
+    }
     if (req.body.password !== undefined) {
       req.body.password = await bcrypt.hash(req.body.password, 10)
     }

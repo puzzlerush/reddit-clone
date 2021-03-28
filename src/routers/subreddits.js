@@ -43,7 +43,12 @@ router.post('/', auth, async (req, res) => {
       returning *
     `
 
-    const { rows: [subreddit] } = await query(insertSubredditStatement, [name, description])
+    let subreddit
+    try {
+      ({ rows: [subreddit] } = await query(insertSubredditStatement, [name, description]))
+    } catch (e) {
+      res.status(409).send({ error: 'A subreddit with that name already exists' })
+    }
     
     const insertModeratorStatement = `
       insert into moderators(user_id, subreddit_id)

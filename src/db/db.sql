@@ -50,6 +50,28 @@ create table posts(
       on delete set null
 );
 
+create table comments(
+  id serial primary key,
+  body text,
+  author_id int,
+  post_id int,
+  parent_comment_id int,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  constraint fk_author
+    foreign key(author_id)
+      references users(id)
+      on delete set null,
+  constraint fk_post
+    foreign key(post_id)
+      references posts(id)
+      on delete set null,
+  constraint fk_parent_comment
+    foreign key(parent_comment_id)
+      references comments(id)
+      on delete set null
+);
+
 create or replace function update_updated_at_column()
   returns trigger
   language plpgsql
