@@ -3,6 +3,7 @@ const usersRouter = require('./routers/users')
 const postsRouter = require('./routers/posts')
 const subredditsRouter = require('./routers/subreddits')
 const moderatorsRouter = require('./routers/moderators')
+const commentsRouter = require('./routers/comments')
 
 const port = process.env.PORT
 
@@ -14,6 +15,7 @@ app.use('/users', usersRouter)
 app.use('/posts', postsRouter)
 app.use('/subreddits', subredditsRouter)
 app.use('/moderators', moderatorsRouter)
+app.use('/comments', commentsRouter)
 
 app.listen(port, () => {
   console.log(`App is listening on port ${port}`)

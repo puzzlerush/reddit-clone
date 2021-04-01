@@ -93,3 +93,9 @@ create trigger update_posts_updated_at
   on posts
   for each row
     execute procedure update_updated_at_column();
+
+create trigger update_comments_updated_at
+  before update
+  on comments
+  for each row
+    execute procedure update_updated_at_column();

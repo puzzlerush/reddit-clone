@@ -83,7 +83,7 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(404).send({ error: 'Could not find post with that id' })
     }
     if (post.author_id !== req.user.id) {
-      return res.status(401).send({ error: 'You must be the post creator to edit it' })
+      return res.status(403).send({ error: 'You must be the post creator to edit it' })
     }
 
     let allowedUpdates

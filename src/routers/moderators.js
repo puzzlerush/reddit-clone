@@ -1,28 +1,9 @@
 const express = require('express')
 const { query } = require('../db')
+const { selectModeratorsStatement, userIsModerator } = require('../db/utils')
 const auth = require('../middleware/auth')
 
 const router = express.Router()
-
-const selectModeratorsStatement = `
-  select u.username moderator_name, sr.name subreddit_name
-  from moderators m
-  inner join users u on m.user_id = u.id
-  inner join subreddits sr on m.subreddit_id = sr.id
-`
-
-const userIsModerator = async (username, subreddit) => {
-  const findSubredditModeratorStatement = `
-    ${selectModeratorsStatement}
-    where u.username = $1 and sr.name = $2
-  `
-  const { rows: [moderator] } = await query(findSubredditModeratorStatement, [
-    username,
-    subreddit
-  ])
-
-  return !!moderator
-}
 
 router.get('/', async (req, res) => {
   try {

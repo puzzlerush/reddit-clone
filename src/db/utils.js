@@ -33,6 +33,28 @@ const updateTableRow = async (table, id, allowedUpdates, updatesObj) => {
   return updatedRow
 }
 
+const selectModeratorsStatement = `
+  select u.username moderator_name, sr.name subreddit_name
+  from moderators m
+  inner join users u on m.user_id = u.id
+  inner join subreddits sr on m.subreddit_id = sr.id
+`
+
+const userIsModerator = async (username, subreddit) => {
+  const findSubredditModeratorStatement = `
+    ${selectModeratorsStatement}
+    where u.username = $1 and sr.name = $2
+  `
+  const { rows: [moderator] } = await query(findSubredditModeratorStatement, [
+    username,
+    subreddit
+  ])
+
+  return !!moderator
+}
+
 module.exports = {
-  updateTableRow
+  updateTableRow,
+  selectModeratorsStatement,
+  userIsModerator
 }
