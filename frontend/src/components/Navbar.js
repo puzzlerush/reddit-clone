@@ -14,12 +14,23 @@ import {
   MenuItem,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
+import axios from '../config/axios';
 import { logout } from '../actions/auth';
 
 const Navbar = ({ user, logout }) => {
   const { colorMode } = useColorMode();
   const bgColor = { light: 'gray.300', dark: 'gray.600' };
   const textColor = { light: 'black', dark: 'gray.100' };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('/users/logout');
+      logout();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <Flex
       w='100vw'
@@ -44,9 +55,9 @@ const Navbar = ({ user, logout }) => {
                 {user.username}
               </MenuButton>
               <MenuList>
-                <MenuGroup title="Profile">
+                <MenuGroup>
                   <MenuItem>My Account</MenuItem>
-                  <MenuItem onClick={() => logout()}>Logout</MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </MenuGroup>
               </MenuList>
             </Menu>

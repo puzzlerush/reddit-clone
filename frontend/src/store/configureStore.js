@@ -1,5 +1,6 @@
 import { createStore, combineReducers } from 'redux'
 import authReducer from '../reducers/auth';
+import axios from '../config/axios';
 
 const loadState = () => {
   try {
@@ -22,6 +23,14 @@ const saveState = (state) => {
   } catch (e) {}
 }
 
+const setAuthToken = (token) => {
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = token;
+  } else {
+    delete axios.defaults.headers.common['Authorization'];
+  }
+};
+
 const configureStore = () => {
   const rootReducer = combineReducers({
     auth: authReducer
@@ -32,9 +41,11 @@ const configureStore = () => {
     persistedState,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   );
-
+  setAuthToken(store.getState().auth.token);
   store.subscribe(() => {
-    saveState(store.getState());
+    const state = store.getState();
+    saveState(state);
+    setAuthToken(state.auth.token);
   });
 
   return store;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { Flex, Box, Stack, Input, Button, Text } from '@chakra-ui/react';
 import axios from '../config/axios';
 import { login } from '../actions/auth';
@@ -25,15 +26,15 @@ class LoginPage extends React.Component {
   handleSubmit = async (e) => {
     e.preventDefault();
     const { username, password } = this.state;
-    const { login } = this.props;
+    const { login, history } = this.props;
     try {
       const response = await axios.post('/users/login', {
         username,
         password,
         message: '',
       });
-      login(response.data)
-
+      login(response.data);
+      history.push('/');
     } catch (e) {
       console.log(e)
       this.setState({ message: 'Incorrect username or password' })
@@ -79,4 +80,4 @@ const mapDispatchToProps = (dispatch) => ({
   login: (user) => dispatch(login(user))
 });
 
-export default connect(undefined, mapDispatchToProps)(LoginPage);
+export default withRouter(connect(undefined, mapDispatchToProps)(LoginPage));
