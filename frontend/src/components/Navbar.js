@@ -6,7 +6,6 @@ import {
   Box,
   Heading,
   Button,
-  useColorMode,
   Menu,
   MenuButton,
   MenuList,
@@ -14,14 +13,11 @@ import {
   MenuItem,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
+import withTheme from './withTheme';
 import axios from '../config/axios';
 import { logout } from '../actions/auth';
 
-const Navbar = ({ user, logout }) => {
-  const { colorMode } = useColorMode();
-  const bgColor = { light: 'gray.300', dark: 'gray.600' };
-  const textColor = { light: 'black', dark: 'gray.100' };
-
+const Navbar = ({ user, logout, bgColor, color }) => {
   const handleLogout = async () => {
     try {
       await axios.post('/users/logout');
@@ -33,22 +29,21 @@ const Navbar = ({ user, logout }) => {
 
   return (
     <Flex
-      w='100vw'
-      bg={bgColor[colorMode]}
-      color={textColor[colorMode]}
       justify='center'
       align='center'
       fontSize={['md', 'lg', 'xl', 'xl']}
       h='60px'
       boxShadow='md'
       p={2}
+      marginBottom={5}
+      bgColor={bgColor}
+      color={color}
     >
-      <Flex w={['100vw', '100vw', '80vw', '80vw']} justify='space-around'>
+      <Flex w={['95vw', '95vw', '80vw', '80vw']} justify='space-around'>
         <Heading as={Link} to='/'>Weddit</Heading>
         <Stack
           direction='row'
         >
-          <Button>Create Post</Button>
           {user ? (
             <Menu>
               <MenuButton as={Button}>
@@ -81,4 +76,4 @@ const mapDispatchToProps = (dispatch) => ({
   logout: () => dispatch(logout())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(Navbar));

@@ -44,34 +44,36 @@ class LoginPage extends React.Component {
   render() {
     const { username, password, message } = this.state;
     return (
-      <Flex justify='center'>
-        <Box m={5}>
-          <form onSubmit={this.handleSubmit}>
-            <Stack spacing={3}>
-              <Input
-                type="text"
-                placeholder="username"
-                size="lg"
-                value={username}
-                onChange={(e) => this.setState({ username: e.target.value })}
-                required
-              />
-              <Input
-                type="password"
-                placeholder="password"
-                size="lg"
-                value={password}
-                onChange={(e) => this.setState({ password: e.target.value })}
-                required
-              />
-              <Button type="submit">Submit</Button>
-            </Stack>
-            <Box p={2}>
-              <Text color='red'>{message}</Text>
-            </Box>
-          </form>
-        </Box>
-      </Flex>
+
+      <Box m='auto' marginTop={10} maxWidth={300}>
+        <form onSubmit={this.handleSubmit}>
+          <Stack spacing={3}>
+            <Input
+              variant='filled'
+              type="text"
+              placeholder="username"
+              size="lg"
+              value={username}
+              onChange={(e) => this.setState({ username: e.target.value })}
+              required
+            />
+            <Input
+              variant='filled'
+              type="password"
+              placeholder="password"
+              size="lg"
+              value={password}
+              onChange={(e) => this.setState({ password: e.target.value })}
+              required
+            />
+            <Button type="submit">Submit</Button>
+          </Stack>
+          <Box p={2}>
+            <Text color='red'>{message}</Text>
+          </Box>
+        </form>
+      </Box>
+
     );
   }
 }
