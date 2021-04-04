@@ -5,9 +5,22 @@ const auth = require('../middleware/auth')
 
 const router = express.Router()
 
+const selectPostStatement = `
+  select
+  p.id, p.type, p.title, p.body, p.created_at, p.updated_at,
+  count(c.id) number_of_comments,
+  max(u.username) author_name,
+  max(sr.name) subreddit_name
+  from posts p
+  inner join users u on p.author_id = u.id
+  inner join subreddits sr on p.subreddit_id = sr.id
+  left join comments c on p.id = c.post_id
+  group by p.id
+` 
+
 router.get('/', async (req, res) => {
   try {
-    const { rows } = await query('select * from posts')
+    const { rows } = await query(selectPostStatement)
     res.send(rows)
   } catch (e) {
     res.status(500).send({ error: e.message })

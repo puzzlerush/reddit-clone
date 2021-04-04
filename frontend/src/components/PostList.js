@@ -5,7 +5,7 @@ const PostList = ({ posts }) => {
   const postsToDisplay = posts.map((post) => <Post key={post.id} post={post} />);
 
   return (
-    <Stack spacing={5}>
+    <Stack spacing={5} mb={10}>
       {postsToDisplay}
     </Stack>
   );

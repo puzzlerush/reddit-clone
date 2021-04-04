@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Flex, Box, Heading, Text, Collapse, IconButton
+  Flex, Box, Heading, Text, Collapse, IconButton, Tooltip, Link as ChakraLink
 } from '@chakra-ui/react';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
+import moment from 'moment';
 import withTheme from './withTheme';
 
 const Post = ({ bgColor, color, post }) => {
   const [showBody, setShowBody] = useState(false);
+  const linkToPost = `/posts/${post.id}`;
   return (
     <Box
       bgColor={bgColor}
@@ -16,11 +18,24 @@ const Post = ({ bgColor, color, post }) => {
       p={2}
       borderRadius={5}
     >
+      <Text>
+        {`Posted by `}
+        <ChakraLink
+          as={Link}
+          to={`/u/${post.author_name}`}
+        >
+          {post.author_name}
+        </ChakraLink>
+        {` `}
+        <Tooltip label={moment(post.created_at).format('LLLL')}>
+          {moment(post.created_at).fromNow()}
+        </Tooltip>
+      </Text>
       <Flex>
         <Text
           isTruncated
           as={post.type === 'text' ? Link : 'a'}
-          to={`/posts/${post.id}`}
+          to={linkToPost}
           href={post.body}
           flex={1}
           fontSize='lg'
@@ -38,9 +53,16 @@ const Post = ({ bgColor, color, post }) => {
       </Flex>
       {post.type === 'text' && (
         <Collapse mt={4} in={showBody}>
-          {post.body}
+          <Text mb={5}>
+            {post.body}
+          </Text>
         </Collapse>
       )}
+      <Flex>
+        <ChakraLink as={Link} to={linkToPost}>
+          {post.number_of_comments} comments
+        </ChakraLink>
+      </Flex>
     </Box>
   );
 };
