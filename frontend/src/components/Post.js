@@ -7,8 +7,8 @@ import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import moment from 'moment';
 import withTheme from './withTheme';
 
-const Post = ({ bgColor, color, post }) => {
-  const [showBody, setShowBody] = useState(false);
+const Post = ({ bgColor, color, post, defaultShow = false }) => {
+  const [showBody, setShowBody] = useState(defaultShow);
   const linkToPost = `/posts/${post.id}`;
   return (
     <Box
@@ -32,18 +32,20 @@ const Post = ({ bgColor, color, post }) => {
         </Tooltip>
       </Text>
       <Flex>
-        <Text
-          isTruncated
-          as={post.type === 'text' ? Link : 'a'}
-          to={linkToPost}
-          target={post.type === 'text' ? null : '_blank'}
-          href={post.body}
-          flex={1}
-          fontSize='lg'
-          fontWeight='bold'
-        >
-          {post.title}
-        </Text>
+        <Box flex={1} mt={2} mb={2}>
+          <Text
+            isTruncated
+            as={post.type === 'text' ? Link : 'a'}
+            to={linkToPost}
+            target={post.type === 'text' ? null : '_blank'}
+            href={post.body}
+            fontSize='lg'
+            fontWeight='bold'
+          >
+            {post.title}
+          </Text>
+        </Box>
+
         {post.type === 'text' && (
           <IconButton
             aria-label='Expand post body'
@@ -53,13 +55,13 @@ const Post = ({ bgColor, color, post }) => {
         )}
       </Flex>
       {post.type === 'text' && (
-        <Collapse mt={4} in={showBody}>
-          <Text mb={5}>
+        <Collapse in={showBody}>
+          <Text border='1px' borderRadius='5px' p={2} m={2} borderColor='gray.400'>
             {post.body}
           </Text>
         </Collapse>
       )}
-      <Flex>
+      <Flex mt={2}>
         <ChakraLink as={Link} to={linkToPost}>
           {post.number_of_comments} comments
         </ChakraLink>

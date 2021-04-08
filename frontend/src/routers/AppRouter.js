@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import LoginPage from '../components/LoginPage';
 import HomePage from '../components/HomePage';
 import CreatePostPage from '../components/CreatePostPage';
+import PostPage from '../components/PostPage';
 
 const AppRouter = () => {
   const { colorMode } = useColorMode();
@@ -20,6 +21,9 @@ const AppRouter = () => {
           </Route>
           <Route path='/login'>
             <LoginPage />
+          </Route>
+          <Route path='/posts/:id'>
+            <PostPage />
           </Route>
           <PrivateRoute path='/submit'>
             <CreatePostPage />
