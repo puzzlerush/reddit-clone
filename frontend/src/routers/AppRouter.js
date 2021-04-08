@@ -1,8 +1,10 @@
 import { Box, useColorMode } from '@chakra-ui/react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import PrivateRoute from '../components/PrivateRoute';
 import Navbar from '../components/Navbar';
 import LoginPage from '../components/LoginPage';
 import HomePage from '../components/HomePage';
+import CreatePostPage from '../components/CreatePostPage';
 
 const AppRouter = () => {
   const { colorMode } = useColorMode();
@@ -19,6 +21,9 @@ const AppRouter = () => {
           <Route path='/login'>
             <LoginPage />
           </Route>
+          <PrivateRoute path='/submit'>
+            <CreatePostPage />
+          </PrivateRoute>
         </Switch>
       </BrowserRouter>
     </Box>

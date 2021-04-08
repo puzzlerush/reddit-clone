@@ -36,6 +36,7 @@ const Post = ({ bgColor, color, post }) => {
           isTruncated
           as={post.type === 'text' ? Link : 'a'}
           to={linkToPost}
+          target={post.type === 'text' ? null : '_blank'}
           href={post.body}
           flex={1}
           fontSize='lg'

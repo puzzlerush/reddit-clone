@@ -11,6 +11,7 @@ import {
   MenuList,
   MenuGroup,
   MenuItem,
+  MenuDivider,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import withTheme from './withTheme';
@@ -51,6 +52,10 @@ const Navbar = ({ user, logout, bgColor, color }) => {
               </MenuButton>
               <MenuList>
                 <MenuGroup>
+                  <MenuItem as={Link} to='/submit'>
+                    Submit Post
+                  </MenuItem>
+                  <MenuDivider />
                   <MenuItem>My Account</MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </MenuGroup>
