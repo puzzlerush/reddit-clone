@@ -1,7 +1,8 @@
 const express = require('express')
 const { query } = require('../db')
 const { updateTableRow, userIsModerator } = require('../db/utils')
-const auth = require('../middleware/auth')
+const auth = require('../middleware/auth')()
+const optionalAuth = require('../middleware/auth')(true)
 
 const router = express.Router()
 
@@ -23,48 +24,52 @@ router.get('/', async (req, res) => {
   }
 })
 
-router.get('/:post_id', async (req, res) => {
+router.get('/:post_id', optionalAuth, async (req, res) => {
   try {
     const { post_id } = req.params
     const selectPostStatement = `
       select
-      c.id comment_id, c.body comment_body, c.created_at comment_created_at, c.updated_at comment_updated_at,
-      cu.username comment_author_name,
       p.id, p.type, p.title, p.body, p.created_at, p.updated_at,
-      pu.username post_author_name,
-      sr.name subreddit_name
-      from comments c
-      inner join users cu on c.author_id = cu.id
-      inner join posts p on c.post_id = p.id
-      inner join users pu on p.author_id = pu.id
+      max(u.username) author_name,
+      coalesce(sum(pv.vote_value), 0) votes,
+      max(sr.name) subreddit_name
+      from posts p
+      inner join users u on p.author_id = u.id
       inner join subreddits sr on p.subreddit_id = sr.id
-      where p.id = $1
+      left join post_votes pv on p.id = pv.post_id
+      group by p.id
+      having p.id = $1
     `
-    const { rows } = await query(selectPostStatement, [post_id])
 
-    if (rows.length === 0) {
+    const selectUserVoteStatement = `select vote_value from post_votes where user_id = $1`
+
+    const selectCommentsStatement = `
+      select
+      c.id, c.body, c.parent_comment_id, c.created_at, c.updated_at,
+      u.username author_name
+      from comments c
+      inner join users u on c.author_id = u.id
+      where c.post_id = $1
+    `
+
+    const { rows: [post] } = await query(selectPostStatement, [post_id])
+    
+    let user_vote_value = 0
+    if (req.user) {
+      const { rows: [{ vote_value }]} = await query(
+        selectUserVoteStatement,
+        [req.user.id]
+      )
+      user_vote_value = vote_value
+    }
+    
+    const { rows: comments } = await query(selectCommentsStatement, [post_id])
+
+    if (!post) {
       return res.status(404).send({ error: 'Could not find post with that id' })
     }
 
-    const post = { ...rows[0] }
-    Object.keys(post).forEach((key) => {
-      if (key.startsWith('comment_')) {
-        delete post[key]
-      }
-    })
-
-    const comments = rows.map((row) => {
-      const {
-        comment_id: id,
-        comment_body: body,
-        comment_created_at: created_at,
-        comment_updated_at: updated_at,
-        comment_author_name: author_name,
-      } = row
-      return { id, body, created_at, updated_at, author_name }
-    })
-
-    res.send({ post, comments })
+    res.send({ post, comments, user_vote_value })
   } catch (e) {
     res.status(500).send({ error: e.message })
   }
@@ -109,7 +114,6 @@ router.put('/:id', auth, async (req, res) => {
         && (await userIsModerator(req.user.username, comment.subreddit_name) === false)) {
       return res.status(403).send({ error: 'You must the comment author to edit it' })
     }
-    console.log(comment)
 
     const updatedComment = await updateTableRow('comments', id, ['body'], req.body)
 

@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { query } = require('../db')
 const { updateTableRow } = require('../db/utils')
-const auth = require('../middleware/auth')
+const auth = require('../middleware/auth')()
 
 const router = express.Router()
 
@@ -82,7 +82,6 @@ router.post('/', async (req, res) => {
       token
     })
   } catch (e) {
-    console.log(e)
     res.status(400).send({ error: e.message })
   }
 })
@@ -163,7 +162,6 @@ router.put('/', auth, async (req, res) => {
    
     res.send(getPublicUser(user))
   } catch (e) {
-    console.log(e)
     res.status(400).send({ error: e.message })
   }
 })

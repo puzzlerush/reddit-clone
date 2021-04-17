@@ -1,6 +1,6 @@
 const express = require('express')
 const { query } = require('../db')
-const auth = require('../middleware/auth')
+const auth = require('../middleware/auth')()
 
 const router = express.Router()
 
@@ -59,7 +59,6 @@ router.post('/', auth, async (req, res) => {
     
     res.send(subreddit)
   } catch (e) {
-    console.log(e)
     res.status(400).send({ error: e.message })
   }
 })

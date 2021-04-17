@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { query } = require('../db')
 
-module.exports = async (req, res, next) => {
+module.exports = (optional = false) => async (req, res, next) => {
   try {
     const token = req.get('Authorization').replace('Bearer ', '')
     const { id } = await jwt.verify(token, process.env.JWT_SECRET)
@@ -11,8 +11,10 @@ module.exports = async (req, res, next) => {
     }
     req.user = user
     req.token = token
-    next()
   } catch (e) {
-    res.status(401).send({ error: 'Please authenticate' })
+    if (!optional) {
+      return res.status(401).send({ error: 'Please authenticate' })
+    }
   }
+  next()
 }

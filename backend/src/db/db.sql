@@ -29,6 +29,21 @@ create table moderators(
       on delete cascade
 );
 
+create table post_votes(
+  user_id int not null,
+  post_id int not null,
+  vote_value int not null check (-1 <= vote_value and vote_value <= 1),
+  primary key (user_id, post_id),
+  constraint fk_user
+    foreign key(user_id)
+      references users(id)
+      on delete cascade,
+  constraint fk_post
+    foreign key(post_id)
+      references posts(id)
+      on delete cascade
+);
+
 create type post_type as enum ('text', 'link');
 
 create table posts(

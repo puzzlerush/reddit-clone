@@ -1,20 +1,21 @@
 const express = require('express')
 const { query } = require('../db')
 const { updateTableRow } = require('../db/utils')
-const auth = require('../middleware/auth')
+const auth = require('../middleware/auth')()
 
 const router = express.Router()
 
 const selectPostStatement = `
   select
   p.id, p.type, p.title, p.body, p.created_at, p.updated_at,
-  count(c.id) number_of_comments,
+  coalesce(sum(pv.vote_value), 0) votes,
+  (select count(*) from comments c where p.id = c.post_id) number_of_comments,
   max(u.username) author_name,
   max(sr.name) subreddit_name
   from posts p
   inner join users u on p.author_id = u.id
   inner join subreddits sr on p.subreddit_id = sr.id
-  left join comments c on p.id = c.post_id
+  left join post_votes pv on p.id = pv.post_id
   group by p.id
 `
 
@@ -31,7 +32,6 @@ router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params
     const { rows: [post] } = await query(`${selectPostStatement} having p.id = $1`, [id])
-
     if (!post) {
       return res.status(404).send({ error: 'Could not find post with that id' })
     }
@@ -113,7 +113,6 @@ router.put('/:id', auth, async (req, res) => {
     const updatedPost = await updateTableRow('posts', id, allowedUpdates, req.body)
     res.send(updatedPost)
   } catch (e) {
-    console.log(e)
     res.status(400).send({ error: e.message })
   }
 })
