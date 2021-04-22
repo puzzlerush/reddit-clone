@@ -79,6 +79,11 @@ router.post('/', auth, async (req, res) => {
       req.user.id,
       foundSubreddit.id
     ])
+
+    // Automatically upvote your own post
+    const createVoteStatement = `insert into post_votes values ($1, $2, $3)`
+    await query(createVoteStatement, [req.user.id, post.id, 1])
+
     res.status(201).send(post)
   } catch (e) {
     res.status(400).send({ error: e.message })
