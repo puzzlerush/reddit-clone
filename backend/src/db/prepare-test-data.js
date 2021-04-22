@@ -150,8 +150,14 @@ const posts = [billPosts, jeffPosts, elonPosts, stevePosts, markPosts].reduce(
 )
 
 const prepareTestData = async () => {
-  const deleteAllRowsStatement = 'truncate table subreddits, users, posts'
-  await query(deleteAllRowsStatement)
+  await query('delete from posts')
+  await query('alter sequence posts_id_seq restart with 1')
+
+  await query('delete from users')
+  await query('alter sequence users_id_seq restart with 1')
+
+  await query('delete from subreddits')
+  await query('alter sequence subreddits_id_seq restart with 1')
 
   for (const subreddit of subreddits) {
     await query(`insert into subreddits(name, description) values ($1, $2)`, [
