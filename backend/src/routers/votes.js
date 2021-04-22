@@ -4,29 +4,43 @@ const auth = require('../middleware/auth')()
 
 const router = express.Router()
 
-const checkVoteValid = async (post_id, vote_value) => {
+const checkVoteType = (voteType) => {
+  const types = ['post', 'comment']
+  let error
+  if (!types.includes(voteType)) {
+    error = 'Invalid vote type'
+    console.log(voteType)
+  }
+  return { voteType, error }
+}
+
+const checkVoteValid = async (item_id, vote_value, vote_type) => {
   let status
   let error
-  if (!/^\d+$/.test(post_id)) {
+  if (!/^\d+$/.test(item_id)) {
     status = 400
-    error = 'Invalid post id'
+    error = `Invalid ${vote_type} id`
   } else if (![-1, 0, 1].includes(parseInt(vote_value))) {
     status = 400
     error = 'Invalid vote value'
   } else {
-    const { rows: [post] } = await query('select * from posts where id = $1', [post_id])
-    if (!post) {
+    const { rows: [item] } = await query(`select * from ${vote_type}s where id = $1`, [item_id])
+    if (!item) {
       status = 404
-      error = 'Could not find post with that id'
+      error = `Could not find ${vote_type} with that id`
     }
   }
 
   return { status, error }
 }
 
-router.get('/', async (req, res) => {
+router.get('/:voteType', async (req, res) => {
   try {
-    const selectPostVotes = `select * from post_votes`
+    const { voteType, error } = checkVoteType(req.params.voteType)
+    if (error) {
+      return res.status(400).send({ error })
+    }
+    const selectPostVotes = `select * from ${voteType}_votes`
     const { rows } = await query(selectPostVotes)
     res.send(rows)
   } catch (e) {
@@ -34,61 +48,69 @@ router.get('/', async (req, res) => {
   }
 })
 
-router.post('/', auth, async (req, res) => {
+router.post('/:voteType', auth, async (req, res) => {
   try {
-    const { post_id, vote_value } = req.body
+    const { voteType, error: voteTypeError } = checkVoteType(req.params.voteType)
+    if (voteTypeError) {
+      return res.status(400).send({ error: voteTypeError })
+    }
+    const { item_id, vote_value } = req.body
 
-    const { status, error } = await checkVoteValid(post_id, vote_value)
+    const { status, error } = await checkVoteValid(item_id, vote_value, voteType)
     if (error) {
       return res.status(status).send({ error })
     }
 
-    const insertPostVoteStatement = `
-      insert into post_votes
+    const insertItemVoteStatement = `
+      insert into ${voteType}_votes
       values($1, $2, $3) returning *
     `
-    let post_vote
+    let item_vote
     try {
-      const { rows: [vote] } = await query(insertPostVoteStatement, [
+      const { rows: [vote] } = await query(insertItemVoteStatement, [
         req.user.id,
-        post_id,
+        item_id,
         vote_value
       ])
-      post_vote = vote
+      item_vote = vote
     } catch (e) {
-      res.status(409).send({ error: 'You have already voted on this post' })
+      res.status(409).send({ error: `You have already voted on this ${voteType}` })
     }
 
-    res.status(201).send(post_vote)
+    res.status(201).send(item_vote)
   } catch (e) {
     res.status(500).send({ error: e.message })
   }
 })
 
-router.put('/:post_id', auth, async (req, res) => {
+router.put('/:voteType/:item_id', auth, async (req, res) => {
   try {
-    const { post_id } = req.params
+    const { voteType, error: voteTypeError } = checkVoteType(req.params.voteType)
+    if (voteTypeError) {
+      return res.status(400).send({ error: voteTypeError })
+    }
+    const { item_id } = req.params
     const { vote_value } = req.body
 
-    const { status, error } = await checkVoteValid(post_id, vote_value)
+    const { status, error } = await checkVoteValid(item_id, vote_value, voteType)
     if (error) {
       return res.status(status).send({ error })
     }
 
-    const updatePostVoteStatement = `
-      update post_votes
+    const updateItemVoteStatement = `
+      update ${voteType}_votes
       set vote_value = $1
-      where user_id = $2 and post_id = $3
+      where user_id = $2 and ${voteType}_id = $3
       returning *
     `
 
-    const { rows: [post_vote] } = await query(updatePostVoteStatement, [
+    const { rows: [item_vote] } = await query(updateItemVoteStatement, [
       vote_value,
       req.user.id,
-      post_id
+      item_id
     ])
 
-    res.send(post_vote)
+    res.send(item_vote)
   } catch (e) {
     res.status(500).send({ error: e.message })
   }
