@@ -32,44 +32,39 @@ router.get('/:post_id', optionalAuth, async (req, res) => {
       p.id, p.type, p.title, p.body, p.created_at, p.updated_at,
       max(u.username) author_name,
       coalesce(sum(pv.vote_value), 0) votes,
+      max(upv.vote_value) has_voted,
       max(sr.name) subreddit_name
       from posts p
       inner join users u on p.author_id = u.id
       inner join subreddits sr on p.subreddit_id = sr.id
       left join post_votes pv on p.id = pv.post_id
+      left join post_votes upv on upv.post_id = p.id and upv.user_id = $1
       group by p.id
-      having p.id = $1
+      having p.id = $2
     `
-
-    const selectUserVoteStatement = `select vote_value from post_votes where user_id = $1`
 
     const selectCommentsStatement = `
       select
       c.id, c.body, c.parent_comment_id, c.created_at, c.updated_at,
-      u.username author_name
+      max(u.username) author_name,
+      coalesce(sum(cv.vote_value), 0) votes,
+      max(ucv.vote_value) has_voted
       from comments c
       inner join users u on c.author_id = u.id
-      where c.post_id = $1
+      left join comment_votes cv on c.id = cv.comment_id
+      left join comment_votes ucv on ucv.comment_id = c.id and ucv.user_id = $1
+      group by c.id
+      having c.post_id = $2
     `
-
-    const { rows: [post] } = await query(selectPostStatement, [post_id])
-    
-    let user_vote_value = 0
-    if (req.user) {
-      const { rows: [{ vote_value }]} = await query(
-        selectUserVoteStatement,
-        [req.user.id]
-      )
-      user_vote_value = vote_value
-    }
-    
-    const { rows: comments } = await query(selectCommentsStatement, [post_id])
+    const user_id = req.user ? req.user.id : -1
+    const { rows: [post] } = await query(selectPostStatement, [user_id, post_id])
+    const { rows: comments } = await query(selectCommentsStatement, [user_id, post_id])
 
     if (!post) {
       return res.status(404).send({ error: 'Could not find post with that id' })
     }
 
-    res.send({ post, comments, user_vote_value })
+    res.send({ post, comments })
   } catch (e) {
     res.status(500).send({ error: e.message })
   }

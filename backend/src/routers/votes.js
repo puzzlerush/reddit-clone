@@ -9,7 +9,6 @@ const checkVoteType = (voteType) => {
   let error
   if (!types.includes(voteType)) {
     error = 'Invalid vote type'
-    console.log(voteType)
   }
   return { voteType, error }
 }
