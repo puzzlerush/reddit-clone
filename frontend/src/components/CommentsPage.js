@@ -1,40 +1,63 @@
-import { Text, Heading, Box, Flex, useColorMode } from '@chakra-ui/react';
-import { ChatIcon } from '@chakra-ui/icons';
-import ThemedBox from './ThemedBox';
+import { useState, useEffect } from 'react';
+import { Box, Alert, AlertIcon } from '@chakra-ui/react';
+import Post from './Post';
+import Comment from './Comment';
+import axios from '../axios-config';
 
 const CommentsPage = () => {
-  const { colorMode } = useColorMode();
-  const postDetailColor = 'gray.400';
-  const postDetailBgColor = colorMode === 'light' ? 'gray.100' : 'gray.600';
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [post, setPost] = useState(null);
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    const fetchPostAndComments = async () => {
+      try {
+        setIsLoading(true);
+        // Hard-code the post id for now
+        const response = await axios.get('/comments/1');
+        console.log(response.data);
+        setPost(response.data.post);
+        setComments(response.data.comments);
+      } catch (e) {
+        setError(e.message);
+      }
+      setIsLoading(false);
+    };
+    fetchPostAndComments();
+  }, []);
+
+  if (isLoading) {
+    return null;
+  } else if (error) {
+    return (
+      <Alert status="error">
+        <AlertIcon />
+        {error}
+      </Alert>
+    );
+  }
+  const { subreddit_name, author_name, created_at, title, body, votes } = post;
+  const numComments = comments.length;
   return (
-    <ThemedBox
-      p={4}
-      borderRadius="md"
-      width="100%"
-      light="gray.50"
-      dark="gray.700"
-    >
-      <Text as="span" color={postDetailColor} fontWeight="bold">
-        r/AskReddit
-      </Text>
-      {' '}
-      <Text as="span" colorisTruncated>
-        Posted by u/dalkerkd 16 hours ago
-      </Text>
-      <Heading mt={2} mb={4} fontSize="1.5em" fontWeight="500">
-        What foods get better when you add rice? This also happens
-        to be a very long title.
-      </Heading>
-      <Text>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-      </Text>
-      <Flex mt={3} alignItems="center" color={postDetailColor} fontWeight="bold">
-        <Box p={2} borderRadius="sm" _hover={{ backgroundColor: postDetailBgColor }}>
-          <ChatIcon mr={2} />
-          12 comments
-        </Box>
-      </Flex>
-    </ThemedBox>
+    <Box>
+      <Post
+        subreddit={subreddit_name}
+        author={author_name}
+        createdAt={created_at}
+        title={title}
+        body={body}
+        numComments={numComments}
+        numVotes={votes}
+      />
+      <br />
+      <Comment
+        body="this is a story all about how my life got flipped turned upside down"
+        createdAt={created_at}
+        author={author_name}
+        numVotes={5}
+      />
+    </Box>
   );
 }
 
