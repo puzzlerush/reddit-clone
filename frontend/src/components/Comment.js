@@ -1,9 +1,13 @@
 import moment from 'moment';
-import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Flex, Text, Tooltip, useColorMode } from '@chakra-ui/react';
+import { ChatIcon } from '@chakra-ui/icons';
 import ThemedBox from './ThemedBox';
 import UpvoteBar from './UpvoteBar';
 
 const Comment = ({ body, createdAt, author, numVotes }) => {
+  const { colorMode } = useColorMode();
+  const commentDetailColor = 'gray.400';
+  const commentDetailBgColor = colorMode === 'light' ? 'gray.100' : 'gray.600';
   return (
     <ThemedBox
       p={4}
@@ -27,6 +31,12 @@ const Comment = ({ body, createdAt, author, numVotes }) => {
           <Text>
             {body}
           </Text>
+          <Flex mt={3} alignItems="center" color={commentDetailColor} fontWeight="bold">
+            <Box p={2} borderRadius="sm" _hover={{ backgroundColor: commentDetailBgColor }}>
+              <ChatIcon mr={2} />
+              Reply
+            </Box>
+          </Flex>
         </Box>
       </Flex>
     </ThemedBox>

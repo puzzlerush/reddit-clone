@@ -42,7 +42,7 @@ const Post = ({ subreddit, author, createdAt, title, body, numVotes, numComments
           <Flex mt={3} alignItems="center" color={postDetailColor} fontWeight="bold">
             <Box p={2} borderRadius="sm" _hover={{ backgroundColor: postDetailBgColor }}>
               <ChatIcon mr={2} />
-              {numComments}
+              {numComments} comments
             </Box>
           </Flex>
         </Box>
