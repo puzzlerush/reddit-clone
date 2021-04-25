@@ -1,10 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Box, Alert, AlertIcon } from '@chakra-ui/react';
 import Post from './Post';
-import Comment from './Comment';
+import CommentsThread from './CommentsThread';
 import { createLoadingAndErrorSelector, postSelector, commentsSelector } from '../selectors';
 import { getPostAndComments } from '../actions';
+
+const getCommentsWithChildren = (comments) => {
+  const commentsWithChildren = comments.map((comment) => ({ ...comment, children: [] }));
+  commentsWithChildren.forEach((childComment) => {
+    const { parent_comment_id } = childComment;
+    if (parent_comment_id) {
+      const parent = commentsWithChildren.find((comment) => parent_comment_id === comment.id);
+      parent.children = parent.children.concat(childComment);
+    }
+  });
+  return commentsWithChildren.filter(({ parent_comment_id }) => parent_comment_id === null);
+}
 
 const CommentsPage = ({ isLoading, error, post, comments, getPostAndComments }) => {
   useEffect(() => {
@@ -24,19 +36,7 @@ const CommentsPage = ({ isLoading, error, post, comments, getPostAndComments }) 
   const { subreddit_name, author_name, created_at, title, body, votes } = post;
   const numComments = comments.length;
 
-  const commentsToDisplay = comments.map(({ body, created_at, author_name, votes }, idx) => (
-    <Box my={2} ml={idx*4}>
-      <Comment
-        my={2}
-        body={body}
-        createdAt={created_at}
-        author={author_name}
-        numVotes={votes}
-      />
-    </Box>
-
-  ));
-
+  const rootComments = getCommentsWithChildren(comments);
   return (
     <Box>
       <Post
@@ -49,7 +49,7 @@ const CommentsPage = ({ isLoading, error, post, comments, getPostAndComments }) 
         numVotes={votes}
       />
       <br />
-      {commentsToDisplay}
+      <CommentsThread comments={rootComments} indent={0} />
     </Box>
   );
 }
