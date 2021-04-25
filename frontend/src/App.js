@@ -19,7 +19,7 @@ function App() {
       >
         <Navbar />
         <Flex justifyContent="center">
-          <Box width={['100%', '80%', '70%', '60%']}>
+          <Box width={['95%', '80%', '70%', '60%']} mb={10}>
             <CommentsPage />
           </Box>
         </Flex>

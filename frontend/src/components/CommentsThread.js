@@ -33,7 +33,21 @@ class CommentsThread extends Component {
         )}
         {showReplies && (
           <Flex direction="row">
-            {children.length > 0 && <ThemedBox ml={2} w={1} alignSelf="stretch" />}
+            {children.length > 0 && (
+              <Box
+                alignSelf="stretch"
+                p={2}
+                role="group"
+                _hover={{ cursor: 'pointer' }}
+                onClick={this.toggleShowReplies}
+              >
+                <ThemedBox
+                  w={1}
+                  h="100%"
+                  _groupHover={{ backgroundColor: 'orange.400' }}
+                />
+              </Box>
+            )}
             <Box flexGrow={1}>
               <CommentsThread comments={children} indent={indent + 4} />
             </Box>
