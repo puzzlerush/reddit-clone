@@ -1,14 +1,6 @@
 import axios from '../axios-config';
-
-const setPost = (post) => ({
-  type: 'SET_POST',
-  post
-});
-
-const setComments = (comments) => ({
-  type: 'SET_COMMENTS',
-  comments
-});
+import { setPost } from './post';
+import { setComments } from './comments';
 
 export const getPostAndComments = (id) => async (dispatch) => {
   try {

@@ -1,5 +1,5 @@
 const errorReducer = (state = {}, action) => {
-  const { type, message } = action;
+  const { type, message, response } = action;
   const matches = /(.*)_(REQUEST|FAILURE)/.exec(type);
 
   if (!matches) {
@@ -10,7 +10,7 @@ const errorReducer = (state = {}, action) => {
 
   return {
     ...state,
-    [requestName]: requestStatus === 'FAILURE' ? message : ''
+    [requestName]: requestStatus === 'FAILURE' ? { message, response } : {},
   };
 };
 

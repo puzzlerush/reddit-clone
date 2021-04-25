@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
+import theme from './theme';
 import configureStore from './store/configureStore';
 
 const store = configureStore();
@@ -12,7 +13,7 @@ const store = configureStore();
 ReactDOM.render(
   <StrictMode>
     <Provider store={store}>
-      <ColorModeScript />
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <App />
     </Provider>
   </StrictMode>,
