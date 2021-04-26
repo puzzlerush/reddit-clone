@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { ChakraProvider, Box, Flex } from '@chakra-ui/react';
 import theme from './theme';
+import PublicRoute from './components/PublicRoute';
 import Navbar from './components/Navbar';
 import CommentsPage from './components/CommentsPage';
 import LoginPage from './components/LoginPage';
@@ -19,9 +20,9 @@ function App() {
                 <Route path="/comments/:id">
                   <CommentsPage />
                 </Route>
-                <Route path="/login">
+                <PublicRoute path="/login">
                   <LoginPage />
-                </Route>
+                </PublicRoute>
               </Switch>
             </Box>
           </Flex>

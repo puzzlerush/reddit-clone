@@ -6,9 +6,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
 import theme from './theme';
-import configureStore from './store/configureStore';
-
-const store = configureStore();
+import store from './store/configureStore';
 
 ReactDOM.render(
   <StrictMode>

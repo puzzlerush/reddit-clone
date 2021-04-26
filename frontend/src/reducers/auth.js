@@ -1,7 +1,6 @@
 import { loadState } from '../localStorage';
 
 const initialState = loadState('authState') || {};
-console.log(initialState);
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {

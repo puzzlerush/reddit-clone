@@ -26,3 +26,18 @@ export const startLogin = (username, password) => async (dispatch) => {
     });
   }
 };
+
+export const startLogout = () => async (dispatch) => {
+  try {
+    dispatch({ type: 'LOGOUT_REQUEST' });
+    await axios.post('/users/logout');
+    dispatch(logout());
+    dispatch({ type: 'LOGOUT_SUCCESS' });
+  } catch (e) {
+    dispatch({
+      type: 'LOGOUT_FAILURE',
+      message: e.message,
+      response: e.response,
+    });
+  }
+};

@@ -29,3 +29,5 @@ export const postSelector = (state) => state.post;
 export const commentsSelector = (state) => state.comments;
 
 export const userSelector = (state) => state.auth.user;
+
+export const tokenSelector = (state) => state.auth.token;
