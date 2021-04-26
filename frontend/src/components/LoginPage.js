@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import {
   Box,
   Stack,
@@ -22,11 +23,14 @@ class LoginPage extends React.Component {
     };
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
     const { username, password } = this.state;
-    const { startLogin } = this.props;
-    startLogin(username, password);
+    const { startLogin, location, history } = this.props;
+    await startLogin(username, password);
+    history.push(
+      (location && location.state && location.state.prevPathname) || '/'
+    );
   };
 
   render() {
@@ -34,10 +38,19 @@ class LoginPage extends React.Component {
     const {
       isLoading,
       error: { message, response },
+      location,
     } = this.props;
     const error = !!message;
+    const requireAuth =
+      location && location.state && location.state.requireAuth;
     return (
       <Box w={300} m="auto">
+        {requireAuth && (
+          <Alert status="warning" mb={2}>
+            <AlertIcon />
+            {requireAuth}
+          </Alert>
+        )}
         {error && (
           <Alert status="error" mb={2}>
             <AlertIcon />
@@ -92,4 +105,6 @@ const mapDispatchToProps = (dispatch) => ({
   startLogin: (username, password) => dispatch(startLogin(username, password)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(LoginPage)
+);

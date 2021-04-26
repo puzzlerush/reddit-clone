@@ -3,9 +3,11 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { ChakraProvider, Box, Flex } from '@chakra-ui/react';
 import theme from './theme';
 import PublicRoute from './components/PublicRoute';
+import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
 import CommentsPage from './components/CommentsPage';
 import LoginPage from './components/LoginPage';
+import CreatePostPage from './components/CreatePostPage';
 import ThemedBox from './components/ThemedBox';
 
 function App() {
@@ -23,6 +25,9 @@ function App() {
                 <PublicRoute path="/login">
                   <LoginPage />
                 </PublicRoute>
+                <PrivateRoute path="/submit">
+                  <CreatePostPage />
+                </PrivateRoute>
               </Switch>
             </Box>
           </Flex>

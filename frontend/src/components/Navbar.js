@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import {
+  Box,
   Heading,
   Spacer,
   HStack,
@@ -9,6 +10,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  MenuDivider,
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
@@ -21,40 +23,51 @@ const Navbar = ({ user, startLogout }) => {
   return (
     <ThemedBox
       py={2}
-      px={50}
+      px={[5, 5, 10, 10]}
       display="flex"
       justifyContent="flex-start"
       alignItems="center"
       mb={7}
     >
-      <Heading mx={4} display={['none', 'block']}>
+      <Heading mx={4} fontSize={['1.5rem', '2.25rem']}>
         weddit
       </Heading>
-      <Button>Home</Button>
+      <HStack display={['none', 'flex']}>
+        <Button as={Link} to="/">
+          Home
+        </Button>
+        <Button as={Link} to="/submit">
+          Submit
+        </Button>
+      </HStack>
       <Spacer />
       <HStack>
         {user ? (
-          <>
-            <Button as={Link} to="/submit">
-              Submit
-            </Button>
-            <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                {user.username}
-              </MenuButton>
-              <MenuList>
-                <MenuItem>My Account</MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    startLogout();
-                    history.push('/');
-                  }}
-                >
-                  Logout
+          <Menu>
+            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              {user.username}
+            </MenuButton>
+            <MenuList>
+              <Box display={['block', 'none']}>
+                <MenuItem as={Link} to="/">
+                  Home
                 </MenuItem>
-              </MenuList>
-            </Menu>
-          </>
+                <MenuItem as={Link} to="/submit">
+                  Submit
+                </MenuItem>
+                <MenuDivider />
+              </Box>
+              <MenuItem>My Account</MenuItem>
+              <MenuItem
+                onClick={async () => {
+                  await startLogout();
+                  history.push('/');
+                }}
+              >
+                Logout
+              </MenuItem>
+            </MenuList>
+          </Menu>
         ) : (
           <>
             <Button as={Link} to="/login">
