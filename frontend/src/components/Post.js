@@ -1,13 +1,32 @@
+import { Link } from 'react-router-dom';
 import moment from 'moment';
-import { Text, Heading, Box, Flex, Tooltip, useColorMode } from '@chakra-ui/react';
+import {
+  Text,
+  Heading,
+  Box,
+  Flex,
+  Tooltip,
+  useColorMode,
+} from '@chakra-ui/react';
 import { ChatIcon } from '@chakra-ui/icons';
 import ThemedBox from './ThemedBox';
 import UpvoteBar from './UpvoteBar';
 
-const Post = ({ subreddit, author, createdAt, title, body, numVotes, numComments }) => {
+const Post = ({
+  id,
+  type,
+  subreddit,
+  author,
+  createdAt,
+  title,
+  body,
+  numVotes,
+  numComments,
+}) => {
   const { colorMode } = useColorMode();
   const postDetailColor = 'gray.400';
   const postDetailBgColor = colorMode === 'light' ? 'gray.100' : 'gray.600';
+  const isTextPost = type === 'text';
   return (
     <ThemedBox
       p={4}
@@ -21,8 +40,7 @@ const Post = ({ subreddit, author, createdAt, title, body, numVotes, numComments
         <Box>
           <Text as="span" color={postDetailColor} fontWeight="bold">
             {`r/${subreddit}`}
-          </Text>
-          {' '}
+          </Text>{' '}
           <Text as="span" color={postDetailColor}>
             {`Posted by `}
           </Text>
@@ -33,14 +51,31 @@ const Post = ({ subreddit, author, createdAt, title, body, numVotes, numComments
               {moment(createdAt).fromNow()}
             </Tooltip>
           </Text>
-          <Heading mt={2} mb={4} fontSize="1.5em" fontWeight="500">
+          <Heading
+            as={isTextPost ? Link : 'a'}
+            display="block"
+            to={isTextPost ? `/comments/${id}` : null}
+            href={isTextPost ? null : body}
+            target={isTextPost ? null : '_blank'}
+            mt={2}
+            mb={4}
+            fontSize="1.5em"
+            fontWeight="500"
+          >
             {title}
           </Heading>
-          <Text>
-            {body}
-          </Text>
-          <Flex mt={3} alignItems="center" color={postDetailColor} fontWeight="bold">
-            <Box p={2} borderRadius="sm" _hover={{ backgroundColor: postDetailBgColor }}>
+          {isTextPost && <Text>{body}</Text>}
+          <Flex
+            mt={3}
+            alignItems="center"
+            color={postDetailColor}
+            fontWeight="bold"
+          >
+            <Box
+              p={2}
+              borderRadius="sm"
+              _hover={{ backgroundColor: postDetailBgColor }}
+            >
               <ChatIcon mr={2} />
               {numComments} comments
             </Box>
@@ -49,6 +84,6 @@ const Post = ({ subreddit, author, createdAt, title, body, numVotes, numComments
       </Flex>
     </ThemedBox>
   );
-}
+};
 
 export default Post;

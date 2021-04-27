@@ -54,13 +54,24 @@ const CommentsPage = ({
       </Alert>
     );
   }
-  const { subreddit_name, author_name, created_at, title, body, votes } = post;
+  const {
+    id: post_id,
+    type,
+    subreddit_name,
+    author_name,
+    created_at,
+    title,
+    body,
+    votes,
+  } = post;
   const numComments = comments.length;
 
   const rootComments = getCommentsWithChildren(comments);
   return (
     <Box>
       <Post
+        id={post_id}
+        type={type}
         subreddit={subreddit_name}
         author={author_name}
         createdAt={created_at}
