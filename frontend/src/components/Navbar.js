@@ -23,22 +23,24 @@ const Navbar = ({ user, startLogout }) => {
   return (
     <ThemedBox
       py={2}
-      px={[5, 5, 10, 10]}
+      px={[0, 0, 10, 10]}
       display="flex"
       justifyContent="flex-start"
       alignItems="center"
       mb={7}
     >
-      <Heading mx={4} fontSize={['1.5rem', '2.25rem']}>
+      <Heading mx={4} fontSize={['1.39rem', '2.25rem']}>
         weddit
       </Heading>
       <HStack display={['none', 'flex']}>
         <Button as={Link} to="/">
           Home
         </Button>
-        <Button as={Link} to="/submit">
-          Submit
-        </Button>
+        {user && (
+          <Button as={Link} to="/submit">
+            Submit
+          </Button>
+        )}
       </HStack>
       <Spacer />
       <HStack>

@@ -28,9 +28,12 @@ class LoginPage extends React.Component {
     const { username, password } = this.state;
     const { startLogin, location, history } = this.props;
     await startLogin(username, password);
-    history.push(
-      (location && location.state && location.state.prevPathname) || '/'
-    );
+    const { error } = this.props;
+    if (!error.message) {
+      history.push(
+        (location && location.state && location.state.prevPathname) || '/'
+      );
+    }
   };
 
   render() {
@@ -58,8 +61,8 @@ class LoginPage extends React.Component {
           </Alert>
         )}
         <form onSubmit={this.handleSubmit}>
-          <FormControl>
-            <Stack spacing={3}>
+          <Stack spacing={3}>
+            <FormControl>
               <Input
                 value={username}
                 onChange={(e) => this.setState({ username: e.target.value })}
@@ -70,6 +73,8 @@ class LoginPage extends React.Component {
                 size="md"
                 isRequired
               />
+            </FormControl>
+            <FormControl>
               <Input
                 value={password}
                 onChange={(e) => this.setState({ password: e.target.value })}
@@ -80,11 +85,11 @@ class LoginPage extends React.Component {
                 size="md"
                 isRequired
               />
-              <Button type="submit" isLoading={isLoading || null}>
-                Login
-              </Button>
-            </Stack>
-          </FormControl>
+            </FormControl>
+            <Button type="submit" isLoading={isLoading || null}>
+              Login
+            </Button>
+          </Stack>
         </form>
       </Box>
     );

@@ -6,6 +6,7 @@ import errorReducer from '../reducers/error';
 import postReducer from '../reducers/post';
 import commentsReducer from '../reducers/comments';
 import { saveState } from '../localStorage';
+import subredditsReducer from '../reducers/subreddits';
 
 const composeEnhancers =
   (typeof window !== 'undefined' &&
@@ -19,6 +20,7 @@ const configureStore = () => {
     error: errorReducer,
     post: postReducer,
     comments: commentsReducer,
+    subreddits: subredditsReducer,
   });
 
   const store = createStore(

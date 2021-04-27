@@ -31,3 +31,5 @@ export const commentsSelector = (state) => state.comments;
 export const userSelector = (state) => state.auth.user;
 
 export const tokenSelector = (state) => state.auth.token;
+
+export const subredditsSelector = (state) => state.subreddits;
