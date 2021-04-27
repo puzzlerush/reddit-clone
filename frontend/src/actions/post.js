@@ -16,7 +16,6 @@ export const submitPost = (postDetails) => async (dispatch) => {
       subreddit,
     });
     dispatch({ type: 'SUBMIT_POST_SUCCESS' });
-    console.log(response);
     return response.data;
   } catch (e) {
     dispatch({
