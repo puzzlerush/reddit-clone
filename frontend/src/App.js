@@ -7,6 +7,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
 import CommentsPage from './components/CommentsPage';
 import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
 import CreatePostPage from './components/CreatePostPage';
 import ThemedBox from './components/ThemedBox';
 
@@ -24,6 +25,9 @@ function App() {
                 </Route>
                 <PublicRoute path="/login">
                   <LoginPage />
+                </PublicRoute>
+                <PublicRoute path="/register">
+                  <RegisterPage />
                 </PublicRoute>
                 <PrivateRoute path="/submit">
                   <CreatePostPage />

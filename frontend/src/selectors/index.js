@@ -1,17 +1,18 @@
 export const createLoadingSelector = (requestNames, defaultLoading = true) => (
   state
 ) => {
-  const entries = Object.entries(state.loading);
-  const loading = entries
-    .filter(([key]) => requestNames.includes(key))
-    .some(([, value]) => value);
+  const entries = Object.entries(state.loading).filter(([key]) =>
+    requestNames.includes(key)
+  );
+  const loading = entries.some(([, value]) => value);
   return defaultLoading ? entries.length === 0 || loading : loading;
 };
 
 export const createErrorSelector = (requestNames) => (state) => {
-  const entries = Object.entries(state.error);
-  const error =
-    entries.length > 0 && entries.filter(([key]) => requestNames.includes(key));
+  const entries = Object.entries(state.error).filter(([key]) =>
+    requestNames.includes(key)
+  );
+  const error = entries.length > 0 && entries;
   return error[0] ? error[0][1] : false;
 };
 

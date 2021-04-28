@@ -41,3 +41,22 @@ export const startLogout = () => async (dispatch) => {
     });
   }
 };
+
+export const startRegister = (username, password) => async (dispatch) => {
+  try {
+    dispatch({ type: 'REGISTER_REQUEST' });
+    const response = await axios.post('/users', {
+      username,
+      password,
+    });
+    const { user, token } = response.data;
+    dispatch(login(user, token));
+    dispatch({ type: 'REGISTER_SUCCESS' });
+  } catch (e) {
+    dispatch({
+      type: 'REGISTER_FAILURE',
+      message: e.message,
+      response: e.response,
+    });
+  }
+};
