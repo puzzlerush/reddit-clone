@@ -4,6 +4,7 @@ import authReducer from '../reducers/auth';
 import loadingReducer from '../reducers/loading';
 import errorReducer from '../reducers/error';
 import postReducer from '../reducers/post';
+import postListReducer from '../reducers/postList';
 import commentsReducer from '../reducers/comments';
 import { saveState } from '../localStorage';
 import subredditsReducer from '../reducers/subreddits';
@@ -19,6 +20,7 @@ const configureStore = () => {
     loading: loadingReducer,
     error: errorReducer,
     post: postReducer,
+    postList: postListReducer,
     comments: commentsReducer,
     subreddits: subredditsReducer,
   });

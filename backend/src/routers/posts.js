@@ -21,7 +21,7 @@ const selectPostStatement = `
 
 router.get('/', async (req, res) => {
   try {
-    const { rows } = await query(selectPostStatement)
+    const { rows } = await query(`${selectPostStatement} order by votes desc`)
     res.send(rows)
   } catch (e) {
     res.status(500).send({ error: e.message })

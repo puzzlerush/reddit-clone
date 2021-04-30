@@ -54,7 +54,7 @@ const CommentsPage = ({
     return (
       <Alert status="error">
         <AlertIcon />
-        {response.data.error || message}
+        {(response && response.data && response.data.error) || message}
       </Alert>
     );
   }

@@ -59,6 +59,7 @@ router.get('/:post_id', optionalAuth, async (req, res) => {
     const selectCommentsStatement = `
       ${selectAllCommentsStatement}
       having c.post_id = $2
+      order by votes desc
     `
     const user_id = req.user ? req.user.id : -1
     const { rows: [post] } = await query(selectPostStatement, [user_id, post_id])

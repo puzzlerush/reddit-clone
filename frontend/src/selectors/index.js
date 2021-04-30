@@ -27,6 +27,8 @@ export const createLoadingAndErrorSelector = (
 
 export const postSelector = (state) => state.post;
 
+export const postListSelector = (state) => state.postList;
+
 export const commentsSelector = (state) => state.comments;
 
 export const userSelector = (state) => state.auth.user;

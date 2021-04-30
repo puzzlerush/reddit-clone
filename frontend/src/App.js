@@ -9,6 +9,7 @@ import CommentsPage from './components/CommentsPage';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import CreatePostPage from './components/CreatePostPage';
+import HomePage from './components/HomePage';
 import ThemedBox from './components/ThemedBox';
 
 function App() {
@@ -32,6 +33,9 @@ function App() {
                 <PrivateRoute path="/submit">
                   <CreatePostPage />
                 </PrivateRoute>
+                <Route path="/">
+                  <HomePage />
+                </Route>
               </Switch>
             </Box>
           </Flex>
