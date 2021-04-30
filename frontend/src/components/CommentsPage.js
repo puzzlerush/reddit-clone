@@ -1,13 +1,16 @@
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Box, Alert, AlertIcon } from '@chakra-ui/react';
+import { Box, Flex, Text, Heading, Alert, AlertIcon } from '@chakra-ui/react';
 import Post from './Post';
 import CommentsThread from './CommentsThread';
+import WriteCommentBox from './WriteCommentBox';
+import LoginAndRegisterButtons from './LoginAndRegisterButtons';
 import {
   createLoadingAndErrorSelector,
   postSelector,
   commentsSelector,
+  userSelector,
 } from '../selectors';
 import { getPostAndComments } from '../actions';
 
@@ -36,6 +39,7 @@ const CommentsPage = ({
   post,
   comments,
   getPostAndComments,
+  user,
 }) => {
   const { id } = useParams();
 
@@ -81,7 +85,33 @@ const CommentsPage = ({
         numVotes={votes}
       />
       <br />
-      <CommentsThread comments={rootComments} indent={0} />
+      {user ? (
+        <Box>
+          <Box m={2}>
+            <Text as="span" color="gray.500">
+              {'Comment as '}
+            </Text>
+            <Text as="span">{user.username}</Text>
+          </Box>
+          <WriteCommentBox />
+        </Box>
+      ) : (
+        <Flex
+          p={5}
+          border="1px"
+          borderRadius={5}
+          borderColor="gray.500"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Heading size="md" color="gray.500">
+            Log in or register to leave a comment
+          </Heading>
+          <LoginAndRegisterButtons />
+        </Flex>
+      )}
+      <br />
+      <CommentsThread comments={rootComments} />
     </Box>
   );
 };
@@ -95,6 +125,7 @@ const mapStateToProps = (state) => ({
   error: errorSelector(state),
   post: postSelector(state),
   comments: commentsSelector(state),
+  user: userSelector(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({

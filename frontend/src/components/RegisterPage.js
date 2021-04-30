@@ -40,14 +40,16 @@ class RegisterPage extends React.Component {
     try {
       e.preventDefault();
       const { username, password, confirmPassword } = this.state;
-      const { startRegister, history } = this.props;
+      const { startRegister, history, location } = this.props;
       if (password !== confirmPassword) {
         return this.setState({ doNotMatchError: 'Passwords do not match' });
       }
       await startRegister(username, password);
       const { error } = this.props;
-      if (!error) {
-        history.push('/');
+      if (!error.message) {
+        history.push(
+          (location && location.state && location.state.prevPathname) || '/'
+        );
       }
     } catch (e) {}
   };

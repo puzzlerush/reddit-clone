@@ -17,6 +17,7 @@ import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import ThemedBox from './ThemedBox';
 import { userSelector } from '../selectors';
 import { startLogout } from '../actions/auth';
+import LoginAndRegisterButtons from './LoginAndRegisterButtons';
 
 const Navbar = ({ user, startLogout }) => {
   let history = useHistory();
@@ -43,42 +44,35 @@ const Navbar = ({ user, startLogout }) => {
         )}
       </HStack>
       <Spacer />
-      <HStack>
-        {user ? (
-          <Menu>
-            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-              {user.username}
-            </MenuButton>
-            <MenuList>
-              <Box display={['block', 'none']}>
-                <MenuItem as={Link} to="/">
-                  Home
-                </MenuItem>
-                <MenuItem as={Link} to="/submit">
-                  Submit
-                </MenuItem>
-                <MenuDivider />
-              </Box>
-              <MenuItem>My Account</MenuItem>
-              <MenuItem
-                onClick={async () => {
-                  await startLogout();
-                  history.push('/');
-                }}
-              >
-                Logout
+
+      {user ? (
+        <Menu>
+          <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+            {user.username}
+          </MenuButton>
+          <MenuList>
+            <Box display={['block', 'none']}>
+              <MenuItem as={Link} to="/">
+                Home
               </MenuItem>
-            </MenuList>
-          </Menu>
-        ) : (
-          <>
-            <Button as={Link} to="/login">
-              Login
-            </Button>
-            <Button>Register</Button>
-          </>
-        )}
-      </HStack>
+              <MenuItem as={Link} to="/submit">
+                Submit
+              </MenuItem>
+              <MenuDivider />
+            </Box>
+            <MenuItem>My Account</MenuItem>
+            <MenuItem
+              onClick={async () => {
+                await startLogout();
+              }}
+            >
+              Logout
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      ) : (
+        <LoginAndRegisterButtons />
+      )}
       <ColorModeSwitcher />
     </ThemedBox>
   );

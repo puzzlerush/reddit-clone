@@ -6,7 +6,7 @@ import UpvoteBar from './UpvoteBar';
 
 const Comment = ({ body, createdAt, author, numVotes }) => {
   const { colorMode } = useColorMode();
-  const commentDetailColor = 'gray.400';
+  const commentDetailColor = 'gray.500';
   const commentDetailBgColor = colorMode === 'light' ? 'gray.100' : 'gray.600';
   return (
     <ThemedBox
@@ -21,18 +21,24 @@ const Comment = ({ body, createdAt, author, numVotes }) => {
         <Box>
           <Text as="span" isTruncated>
             {author}
-          </Text>
-          {' '}
-          <Text as="span" color="gray.400">
+          </Text>{' '}
+          <Text as="span" color="gray.500">
             <Tooltip label={moment(createdAt).format('LLLL')}>
               {moment(createdAt).fromNow()}
             </Tooltip>
           </Text>
-          <Text>
-            {body}
-          </Text>
-          <Flex mt={3} alignItems="center" color={commentDetailColor} fontWeight="bold">
-            <Box p={2} borderRadius="sm" _hover={{ backgroundColor: commentDetailBgColor }}>
+          <Text>{body}</Text>
+          <Flex
+            mt={3}
+            alignItems="center"
+            color={commentDetailColor}
+            fontWeight="bold"
+          >
+            <Box
+              p={2}
+              borderRadius="sm"
+              _hover={{ backgroundColor: commentDetailBgColor }}
+            >
               <ChatIcon mr={2} />
               Reply
             </Box>

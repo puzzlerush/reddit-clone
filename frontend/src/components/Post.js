@@ -24,7 +24,7 @@ const Post = ({
   numComments,
 }) => {
   const { colorMode } = useColorMode();
-  const postDetailColor = 'gray.400';
+  const postDetailColor = 'gray.500';
   const postDetailBgColor = colorMode === 'light' ? 'gray.100' : 'gray.600';
   const isTextPost = type === 'text';
   return (
