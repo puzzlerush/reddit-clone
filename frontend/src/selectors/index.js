@@ -13,7 +13,12 @@ export const createErrorSelector = (requestNames) => (state) => {
     requestNames.includes(key)
   );
   const error = entries.length > 0 && entries;
-  return error[0] ? error[0][1] : false;
+  if (error[0]) {
+    const { message, response } = error[0][1];
+    return (response && response.data && response.data.error) || message;
+  } else {
+    return false;
+  }
 };
 
 export const createLoadingAndErrorSelector = (

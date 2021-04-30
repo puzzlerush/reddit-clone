@@ -36,13 +36,7 @@ class WriteCommentBox extends React.Component {
 
   render() {
     const { body } = this.state;
-    const {
-      type = 'comment',
-      isLoading,
-      error: { message, response },
-      user,
-    } = this.props;
-    const error = !!message;
+    const { type = 'comment', isLoading, error, user } = this.props;
     return (
       <Box>
         <form onSubmit={this.handleSubmit}>
@@ -59,9 +53,7 @@ class WriteCommentBox extends React.Component {
               placeholder="what are your thoughts?"
               rows={5}
             />
-            <FormErrorMessage>
-              {response ? response.data.error : message}
-            </FormErrorMessage>
+            <FormErrorMessage>{error}</FormErrorMessage>
           </FormControl>
           <Button isDisabled={!body} isLoading={isLoading} type="submit">
             {type}

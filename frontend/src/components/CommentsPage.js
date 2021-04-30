@@ -35,26 +35,24 @@ const getCommentsWithChildren = (comments) => {
 
 const CommentsPage = ({
   isLoading,
-  error: { message, response },
+  error,
   post,
   comments,
   getPostAndComments,
   user,
 }) => {
   const { id } = useParams();
-
   useEffect(() => {
     getPostAndComments(id);
   }, []);
 
-  const error = !!message;
   if (isLoading) {
     return null;
   } else if (error) {
     return (
       <Alert status="error">
         <AlertIcon />
-        {(response && response.data && response.data.error) || message}
+        {error}
       </Alert>
     );
   }

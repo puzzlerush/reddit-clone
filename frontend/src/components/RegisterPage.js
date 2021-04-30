@@ -46,7 +46,7 @@ class RegisterPage extends React.Component {
       }
       await startRegister(username, password);
       const { error } = this.props;
-      if (!error.message) {
+      if (!error) {
         history.push(
           (location && location.state && location.state.prevPathname) || '/'
         );
@@ -56,21 +56,13 @@ class RegisterPage extends React.Component {
 
   render() {
     const { username, password, confirmPassword, doNotMatchError } = this.state;
-    const {
-      isLoading,
-      error: { message, response },
-    } = this.props;
-    const error = !!message;
+    const { isLoading, error } = this.props;
     return (
       <Box w={300} m="auto">
         {error && (
           <Alert status="error" mb={2}>
             <AlertIcon />
-            {response && response.status === 409
-              ? 'Username is already taken'
-              : response && response.data
-              ? response.data.error
-              : message}
+            {error}
           </Alert>
         )}
         <form onSubmit={this.handleSubmit}>

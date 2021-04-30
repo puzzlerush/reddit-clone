@@ -61,15 +61,15 @@ class CreatePostPage extends React.Component {
       srIsLoading,
       srError,
       submitIsLoading,
-      submitError: { message, response },
+      submitError,
       subreddits,
     } = this.props;
     return (
       <Box w={['100%', '90%', '80%', '70%']} m="auto">
-        {!!message && (
+        {submitError && (
           <Alert status="error" mb={4}>
             <AlertIcon />
-            {response ? response.data.error : message}
+            {submitError}
           </Alert>
         )}
         <form onSubmit={this.handleSubmit}>
@@ -115,7 +115,7 @@ class CreatePostPage extends React.Component {
                 />
               )}
             </FormControl>
-            <FormControl isInvalid={!!srError.message}>
+            <FormControl isInvalid={srError}>
               <Select
                 value={subreddit}
                 onChange={(e) => this.setState({ subreddit: e.target.value })}

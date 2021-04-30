@@ -29,7 +29,7 @@ class LoginPage extends React.Component {
     const { startLogin, location, history } = this.props;
     await startLogin(username, password);
     const { error } = this.props;
-    if (!error.message) {
+    if (!error) {
       history.push(
         (location && location.state && location.state.prevPathname) || '/'
       );
@@ -38,12 +38,7 @@ class LoginPage extends React.Component {
 
   render() {
     const { username, password } = this.state;
-    const {
-      isLoading,
-      error: { message, response },
-      location,
-    } = this.props;
-    const error = !!message;
+    const { isLoading, error, location } = this.props;
     const requireAuth =
       location && location.state && location.state.requireAuth;
     return (
@@ -57,7 +52,7 @@ class LoginPage extends React.Component {
         {error && (
           <Alert status="error" mb={2}>
             <AlertIcon />
-            {response ? response.data.error : message}
+            {error}
           </Alert>
         )}
         <form onSubmit={this.handleSubmit}>

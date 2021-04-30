@@ -5,24 +5,18 @@ import Post from './Post';
 import { createLoadingAndErrorSelector, postListSelector } from '../selectors';
 import { getPostList } from '../actions/postList';
 
-const PostList = ({
-  isLoading,
-  error: { message, response },
-  postList,
-  getPostList,
-}) => {
+const PostList = ({ isLoading, error, postList, getPostList }) => {
   useEffect(() => {
     getPostList();
   }, []);
 
-  const error = !!message;
   if (isLoading) {
     return null;
   } else if (error) {
     return (
       <Alert status="error">
         <AlertIcon />
-        {(response && response.data && response.data.error) || message}
+        {error}
       </Alert>
     );
   }
