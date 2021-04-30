@@ -152,7 +152,7 @@ const {
 const {
   loadingSelector: submitLoadingSelector,
   errorSelector: submitErrorSelector,
-} = createLoadingAndErrorSelector(['SUBMIT_POST']);
+} = createLoadingAndErrorSelector(['SUBMIT_POST'], false);
 
 const mapStateToProps = (state) => ({
   srIsLoading: srLoadingSelector(state),

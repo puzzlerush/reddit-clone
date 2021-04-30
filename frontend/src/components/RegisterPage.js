@@ -12,10 +12,7 @@ import {
   AlertIcon,
 } from '@chakra-ui/react';
 import { startRegister } from '../actions/auth';
-import {
-  createLoadingAndErrorSelector,
-  createLoadingSelector,
-} from '../selectors';
+import { createLoadingAndErrorSelector } from '../selectors';
 
 class RegisterPage extends React.Component {
   constructor(props) {
