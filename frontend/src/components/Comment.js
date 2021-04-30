@@ -1,13 +1,17 @@
+import { useState } from 'react';
 import moment from 'moment';
 import { Box, Flex, Text, Tooltip, useColorMode } from '@chakra-ui/react';
 import { ChatIcon } from '@chakra-ui/icons';
 import ThemedBox from './ThemedBox';
 import UpvoteBar from './UpvoteBar';
+import WriteCommentBox from './WriteCommentBox';
 
-const Comment = ({ body, createdAt, author, numVotes }) => {
+const Comment = ({ id, body, postId, createdAt, author, numVotes }) => {
   const { colorMode } = useColorMode();
   const commentDetailColor = 'gray.500';
   const commentDetailBgColor = colorMode === 'light' ? 'gray.100' : 'gray.600';
+
+  const [showWriteReply, setShowWriteReply] = useState(false);
   return (
     <ThemedBox
       p={4}
@@ -37,7 +41,11 @@ const Comment = ({ body, createdAt, author, numVotes }) => {
             <Box
               p={2}
               borderRadius="sm"
-              _hover={{ backgroundColor: commentDetailBgColor }}
+              _hover={{
+                backgroundColor: commentDetailBgColor,
+                cursor: 'pointer',
+              }}
+              onClick={() => setShowWriteReply(!showWriteReply)}
             >
               <ChatIcon mr={2} />
               Reply
@@ -45,6 +53,22 @@ const Comment = ({ body, createdAt, author, numVotes }) => {
           </Flex>
         </Box>
       </Flex>
+      {showWriteReply && (
+        <Box mt={2}>
+          <Box m={2}>
+            <Text as="span" color="gray.500">
+              {'Reply to '}
+            </Text>
+            <Text as="span">{author}</Text>
+          </Box>
+          <WriteCommentBox
+            type="reply"
+            postId={postId}
+            parentCommentId={id}
+            onClose={() => setShowWriteReply(false)}
+          />
+        </Box>
+      )}
     </ThemedBox>
   );
 };

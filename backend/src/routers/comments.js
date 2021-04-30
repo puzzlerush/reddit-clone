@@ -16,7 +16,7 @@ const selectCommentStatement = `
 
 const selectAllCommentsStatement = `
   select
-  c.id, c.body, c.parent_comment_id, c.created_at, c.updated_at,
+  c.id, c.body, c.post_id, c.parent_comment_id, c.created_at, c.updated_at,
   max(u.username) author_name,
   coalesce(sum(cv.vote_value), 0) votes,
   max(ucv.vote_value) has_voted

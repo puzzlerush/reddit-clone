@@ -19,11 +19,16 @@ class CommentsThread extends Component {
     const { showReplies } = this.state;
     const { comments } = this.props;
     const commentsToDisplay = comments.map(
-      ({ body, created_at, author_name, votes, children }, idx) => (
+      (
+        { id, body, post_id, created_at, author_name, votes, children },
+        idx
+      ) => (
         <Box key={`${body}-${idx}`} mt={4}>
           <Comment
+            id={id}
             my={2}
             body={body}
+            postId={post_id}
             createdAt={created_at}
             author={author_name}
             numVotes={votes}

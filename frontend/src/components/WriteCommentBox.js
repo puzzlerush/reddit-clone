@@ -22,12 +22,16 @@ class WriteCommentBox extends React.Component {
   handleSubmit = async (e) => {
     e.preventDefault();
     const { body } = this.state;
-    const { postId, parentCommentId, submitComment } = this.props;
+    const { postId, parentCommentId, submitComment, onClose } = this.props;
     await submitComment({
       body,
       post_id: postId,
       parent_comment_id: parentCommentId,
     });
+    this.setState({ body: '' });
+    if (onClose) {
+      onClose();
+    }
   };
 
   render() {
