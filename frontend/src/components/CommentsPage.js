@@ -93,7 +93,7 @@ const CommentsPage = ({
             </Text>
             <Text as="span">{user.username}</Text>
           </Box>
-          <WriteCommentBox />
+          <WriteCommentBox postId={post_id} parentCommentId={null} />
         </Box>
       ) : (
         <Flex

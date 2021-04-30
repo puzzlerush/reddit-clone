@@ -1,7 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Box, Textarea, Button } from '@chakra-ui/react';
-import { userSelector } from '../selectors';
+import {
+  Box,
+  FormControl,
+  FormErrorMessage,
+  Textarea,
+  Button,
+} from '@chakra-ui/react';
+import { userSelector, createLoadingAndErrorSelector } from '../selectors';
+import { submitComment } from '../actions/comments';
 
 class WriteCommentBox extends React.Component {
   constructor(props) {
@@ -12,38 +19,68 @@ class WriteCommentBox extends React.Component {
     };
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
-    alert('submit comment');
+    const { body } = this.state;
+    const { postId, parentCommentId, submitComment } = this.props;
+    await submitComment({
+      body,
+      post_id: postId,
+      parent_comment_id: parentCommentId,
+    });
   };
 
   render() {
     const { body } = this.state;
-    const { type = 'comment', user } = this.props;
+    const {
+      type = 'comment',
+      isLoading,
+      error: { message, response },
+      user,
+    } = this.props;
+    const error = !!message;
     return (
       <Box>
         <form onSubmit={this.handleSubmit}>
-          <Textarea
-            value={body}
-            onChange={(e) =>
-              this.setState({
-                body: e.target.value,
-              })
-            }
-            variant="filled"
-            isDisabled={!user}
-            placeholder="what are your thoughts?"
-            rows={5}
-          />
-          <Button type="submit">{type}</Button>
+          <FormControl mb={3} isInvalid={error}>
+            <Textarea
+              value={body}
+              onChange={(e) =>
+                this.setState({
+                  body: e.target.value,
+                })
+              }
+              variant="filled"
+              isDisabled={!user}
+              placeholder="what are your thoughts?"
+              rows={5}
+            />
+            <FormErrorMessage>
+              {response ? response.data.error : message}
+            </FormErrorMessage>
+          </FormControl>
+          <Button isDisabled={!body} isLoading={isLoading} type="submit">
+            {type}
+          </Button>
         </form>
       </Box>
     );
   }
 }
 
+const { loadingSelector, errorSelector } = createLoadingAndErrorSelector(
+  ['SUBMIT_COMMENT'],
+  false
+);
+
 const mapStateToProps = (state) => ({
+  isLoading: loadingSelector(state),
+  error: errorSelector(state),
   user: userSelector(state),
 });
 
-export default connect(mapStateToProps)(WriteCommentBox);
+const mapDispatchToProps = (dispatch) => ({
+  submitComment: (commentDetails) => dispatch(submitComment(commentDetails)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(WriteCommentBox);

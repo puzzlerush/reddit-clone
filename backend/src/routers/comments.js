@@ -14,6 +14,19 @@ const selectCommentStatement = `
   where c.id = $1
 `
 
+const selectAllCommentsStatement = `
+  select
+  c.id, c.body, c.parent_comment_id, c.created_at, c.updated_at,
+  max(u.username) author_name,
+  coalesce(sum(cv.vote_value), 0) votes,
+  max(ucv.vote_value) has_voted
+  from comments c
+  inner join users u on c.author_id = u.id
+  left join comment_votes cv on c.id = cv.comment_id
+  left join comment_votes ucv on ucv.comment_id = c.id and ucv.user_id = $1
+  group by c.id
+`
+
 router.get('/', async (req, res) => {
   try {
     const selectCommentsStatement = `select * from comments`
@@ -44,16 +57,7 @@ router.get('/:post_id', optionalAuth, async (req, res) => {
     `
 
     const selectCommentsStatement = `
-      select
-      c.id, c.body, c.parent_comment_id, c.created_at, c.updated_at,
-      max(u.username) author_name,
-      coalesce(sum(cv.vote_value), 0) votes,
-      max(ucv.vote_value) has_voted
-      from comments c
-      inner join users u on c.author_id = u.id
-      left join comment_votes cv on c.id = cv.comment_id
-      left join comment_votes ucv on ucv.comment_id = c.id and ucv.user_id = $1
-      group by c.id
+      ${selectAllCommentsStatement}
       having c.post_id = $2
     `
     const user_id = req.user ? req.user.id : -1
@@ -84,12 +88,19 @@ router.post('/', auth, async (req, res) => {
       values($1, $2, $3, $4)
       returning *
     `
-    const { rows: [comment] } = await query(insertCommentStatement, [
+    const { rows: [{ id }] } = await query(insertCommentStatement, [
       body,
       req.user.id,
       post_id,
       parent_comment_id
     ])
+
+    const selectInsertedCommentStatement = `
+      ${selectAllCommentsStatement}
+      having c.id = $2
+    `
+
+    const { rows: [comment] } = await query(selectInsertedCommentStatement, [req.user.id, id])
 
     res.status(201).send(comment)
   } catch (e) {
