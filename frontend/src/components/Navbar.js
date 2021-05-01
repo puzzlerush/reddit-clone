@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Box,
   Heading,
@@ -20,7 +20,6 @@ import { startLogout } from '../actions/auth';
 import LoginAndRegisterButtons from './LoginAndRegisterButtons';
 
 const Navbar = ({ user, startLogout }) => {
-  let history = useHistory();
   return (
     <ThemedBox
       py={2}

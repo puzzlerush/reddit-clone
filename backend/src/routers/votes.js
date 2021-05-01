@@ -73,7 +73,19 @@ router.post('/:voteType', auth, async (req, res) => {
       ])
       item_vote = vote
     } catch (e) {
-      res.status(409).send({ error: `You have already voted on this ${voteType}` })
+      const updateItemVoteStatement = `
+        update ${voteType}_votes
+        set vote_value = $1
+        where user_id = $2 and ${voteType}_id = $3
+        returning *
+      `
+
+      const { rows: [vote] } = await query(updateItemVoteStatement, [
+        vote_value,
+        req.user.id,
+        item_id
+      ])
+      item_vote = vote
     }
 
     res.status(201).send(item_vote)
@@ -82,37 +94,40 @@ router.post('/:voteType', auth, async (req, res) => {
   }
 })
 
-router.put('/:voteType/:item_id', auth, async (req, res) => {
-  try {
-    const { voteType, error: voteTypeError } = checkVoteType(req.params.voteType)
-    if (voteTypeError) {
-      return res.status(400).send({ error: voteTypeError })
-    }
-    const { item_id } = req.params
-    const { vote_value } = req.body
+// PUT route is no longer needed, as the POST route
+// now also updates if it runs into a conflict
 
-    const { status, error } = await checkVoteValid(item_id, vote_value, voteType)
-    if (error) {
-      return res.status(status).send({ error })
-    }
+// router.put('/:voteType/:item_id', auth, async (req, res) => {
+//   try {
+//     const { voteType, error: voteTypeError } = checkVoteType(req.params.voteType)
+//     if (voteTypeError) {
+//       return res.status(400).send({ error: voteTypeError })
+//     }
+//     const { item_id } = req.params
+//     const { vote_value } = req.body
 
-    const updateItemVoteStatement = `
-      update ${voteType}_votes
-      set vote_value = $1
-      where user_id = $2 and ${voteType}_id = $3
-      returning *
-    `
+//     const { status, error } = await checkVoteValid(item_id, vote_value, voteType)
+//     if (error) {
+//       return res.status(status).send({ error })
+//     }
 
-    const { rows: [item_vote] } = await query(updateItemVoteStatement, [
-      vote_value,
-      req.user.id,
-      item_id
-    ])
+//     const updateItemVoteStatement = `
+//       update ${voteType}_votes
+//       set vote_value = $1
+//       where user_id = $2 and ${voteType}_id = $3
+//       returning *
+//     `
 
-    res.send(item_vote)
-  } catch (e) {
-    res.status(500).send({ error: e.message })
-  }
-})
+//     const { rows: [item_vote] } = await query(updateItemVoteStatement, [
+//       vote_value,
+//       req.user.id,
+//       item_id
+//     ])
+
+//     res.send(item_vote)
+//   } catch (e) {
+//     res.status(500).send({ error: e.message })
+//   }
+// })
 
 module.exports = router

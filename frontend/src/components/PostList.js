@@ -8,7 +8,7 @@ import { getPostList } from '../actions/postList';
 const PostList = ({ isLoading, error, postList, getPostList }) => {
   useEffect(() => {
     getPostList();
-  }, []);
+  }, [getPostList]);
 
   if (isLoading) {
     return null;
@@ -30,11 +30,12 @@ const PostList = ({ isLoading, error, postList, getPostList }) => {
           body,
           created_at,
           votes,
+          has_voted,
           number_of_comments,
           author_name,
           subreddit_name,
         }) => (
-          <Box my={4}>
+          <Box key={`${id}-${title}`} my={4}>
             <Post
               id={id}
               type={type}
@@ -45,6 +46,7 @@ const PostList = ({ isLoading, error, postList, getPostList }) => {
               body={body}
               numComments={parseInt(number_of_comments, 10)}
               numVotes={parseInt(votes, 10)}
+              hasVoted={has_voted}
             />
           </Box>
         )

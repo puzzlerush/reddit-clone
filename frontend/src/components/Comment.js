@@ -1,12 +1,23 @@
 import { useState } from 'react';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import { Box, Flex, Text, Tooltip, useColorMode } from '@chakra-ui/react';
 import { ChatIcon } from '@chakra-ui/icons';
 import ThemedBox from './ThemedBox';
 import UpvoteBar from './UpvoteBar';
 import WriteCommentBox from './WriteCommentBox';
+import { userSelector } from '../selectors';
 
-const Comment = ({ id, body, postId, createdAt, author, numVotes }) => {
+const Comment = ({
+  id,
+  body,
+  postId,
+  createdAt,
+  author,
+  numVotes,
+  hasVoted,
+  user,
+}) => {
   const { colorMode } = useColorMode();
   const commentDetailColor = 'gray.500';
   const commentDetailBgColor = colorMode === 'light' ? 'gray.100' : 'gray.600';
@@ -21,7 +32,7 @@ const Comment = ({ id, body, postId, createdAt, author, numVotes }) => {
       dark="gray.700"
     >
       <Flex>
-        <UpvoteBar size={5} numVotes={numVotes} />
+        <UpvoteBar size={5} numVotes={numVotes} voteValue={hasVoted} />
         <Box>
           <Text as="span" isTruncated>
             {author}
@@ -59,7 +70,11 @@ const Comment = ({ id, body, postId, createdAt, author, numVotes }) => {
             <Text as="span" color="gray.500">
               {'Reply to '}
             </Text>
-            <Text as="span">{author}</Text>
+            {author}
+            <Text as="span" color="gray.500">
+              {' as '}
+            </Text>
+            {user.username}
           </Box>
           <WriteCommentBox
             type="reply"
@@ -73,4 +88,8 @@ const Comment = ({ id, body, postId, createdAt, author, numVotes }) => {
   );
 };
 
-export default Comment;
+const mapStateToProps = (state) => ({
+  user: userSelector(state),
+});
+
+export default connect(mapStateToProps)(Comment);

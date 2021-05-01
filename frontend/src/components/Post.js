@@ -21,6 +21,7 @@ const Post = ({
   title,
   body,
   numVotes,
+  hasVoted,
   numComments,
 }) => {
   const { colorMode } = useColorMode();
@@ -36,7 +37,7 @@ const Post = ({
       dark="gray.700"
     >
       <Flex>
-        <UpvoteBar numVotes={numVotes} />
+        <UpvoteBar numVotes={numVotes} postId={id} voteValue={hasVoted} />
         <Box>
           <Text as="span" color={postDetailColor} fontWeight="bold">
             {`r/${subreddit}`}

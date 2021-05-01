@@ -96,6 +96,10 @@ router.post('/', auth, async (req, res) => {
       parent_comment_id
     ])
 
+    // Automatically upvote own comment
+    const createVoteStatement = `insert into comment_votes values ($1, $2, $3)`
+    await query(createVoteStatement, [req.user.id, id, 1])
+
     const selectInsertedCommentStatement = `
       ${selectAllCommentsStatement}
       having c.id = $2

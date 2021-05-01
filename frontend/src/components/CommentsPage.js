@@ -44,7 +44,7 @@ const CommentsPage = ({
   const { id } = useParams();
   useEffect(() => {
     getPostAndComments(id);
-  }, []);
+  }, [getPostAndComments, id]);
 
   if (isLoading) {
     return null;
@@ -65,6 +65,7 @@ const CommentsPage = ({
     title,
     body,
     votes,
+    has_voted,
   } = post;
   const numComments = comments.length;
 
@@ -81,6 +82,7 @@ const CommentsPage = ({
         body={body}
         numComments={numComments}
         numVotes={votes}
+        hasVoted={has_voted}
       />
       <br />
       {user ? (
