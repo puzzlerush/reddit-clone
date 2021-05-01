@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
   Box,
+  HStack,
   FormControl,
   FormErrorMessage,
   Textarea,
@@ -16,6 +17,7 @@ class WriteCommentBox extends React.Component {
 
     this.state = {
       body: '',
+      hasError: false,
     };
   }
 
@@ -28,19 +30,24 @@ class WriteCommentBox extends React.Component {
       post_id: postId,
       parent_comment_id: parentCommentId,
     });
+    const { error } = this.props;
     this.setState({ body: '' });
-    if (onClose) {
+    if (error) {
+      this.setState({ hasError: true });
+    }
+    if (!error && onClose) {
       onClose();
     }
   };
 
   render() {
-    const { body } = this.state;
-    const { type = 'comment', isLoading, error, user } = this.props;
+    const { body, hasError } = this.state;
+    const { type = 'comment', isLoading, error, user, onClose } = this.props;
+    const isReply = type === 'reply';
     return (
       <Box>
         <form onSubmit={this.handleSubmit}>
-          <FormControl mb={3} isInvalid={error}>
+          <FormControl mb={3} isInvalid={error && hasError}>
             <Textarea
               value={body}
               onChange={(e) =>
@@ -55,9 +62,12 @@ class WriteCommentBox extends React.Component {
             />
             <FormErrorMessage>{error}</FormErrorMessage>
           </FormControl>
-          <Button isDisabled={!body} isLoading={isLoading} type="submit">
-            {type}
-          </Button>
+          <HStack>
+            <Button isDisabled={!body} isLoading={isLoading} type="submit">
+              {type}
+            </Button>
+            {isReply && onClose && <Button onClick={onClose}>cancel</Button>}
+          </HStack>
         </form>
       </Box>
     );
