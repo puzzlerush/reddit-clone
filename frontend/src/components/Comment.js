@@ -32,7 +32,13 @@ const Comment = ({
       dark="gray.700"
     >
       <Flex>
-        <UpvoteBar size={5} numVotes={numVotes} voteValue={hasVoted} />
+        <UpvoteBar
+          type="comment"
+          size={5}
+          id={id}
+          numVotes={numVotes}
+          voteValue={hasVoted}
+        />
         <Box>
           <Text as="span" isTruncated>
             {author}

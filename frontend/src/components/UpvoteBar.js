@@ -35,27 +35,41 @@ const UpvoteBar = ({
     />
   );
 
+  const handleUpvote = () => {
+    const voteDetails = { type, id };
+    if (voteValue === 1) {
+      voteDetails.voteValue = 0;
+      voteDetails.newNumVotes = numVotes - 1;
+    } else if (voteValue === 0 || voteValue === null) {
+      voteDetails.voteValue = 1;
+      voteDetails.newNumVotes = numVotes + 1;
+    } else if (voteValue === -1) {
+      voteDetails.voteValue = 1;
+      voteDetails.newNumVotes = numVotes + 2;
+    }
+    submitVote(voteDetails);
+  };
+
+  const handleDownvote = () => {
+    const voteDetails = { type, id };
+    if (voteValue === 1) {
+      voteDetails.voteValue = -1;
+      voteDetails.newNumVotes = numVotes - 2;
+    } else if (voteValue === 0 || voteValue === null) {
+      voteDetails.voteValue = -1;
+      voteDetails.newNumVotes = numVotes - 1;
+    } else if (voteValue === -1) {
+      voteDetails.voteValue = 0;
+      voteDetails.newNumVotes = numVotes + 1;
+    }
+    submitVote(voteDetails);
+  };
+
   return (
     <Flex direction="column" alignItems="center" mr={3}>
       <IconButton
         role="group"
-        onClick={
-          voteValue === 1
-            ? () =>
-                submitVote({
-                  type,
-                  id,
-                  voteValue: 0,
-                  newNumVotes: numVotes - 1,
-                })
-            : () =>
-                submitVote({
-                  type,
-                  id,
-                  voteValue: 1,
-                  newNumVotes: numVotes + 1,
-                })
-        }
+        onClick={handleUpvote}
         backgroundColor="inherit"
         color={voteValue === 1 ? upvoteColor : null}
         boxShadow="none !important"
@@ -66,23 +80,7 @@ const UpvoteBar = ({
       </Text>
       <IconButton
         role="group"
-        onClick={
-          voteValue === -1
-            ? () =>
-                submitVote({
-                  type,
-                  id,
-                  voteValue: 0,
-                  newNumVotes: numVotes + 1,
-                })
-            : () =>
-                submitVote({
-                  type,
-                  id,
-                  voteValue: -1,
-                  newNumVotes: numVotes - 1,
-                })
-        }
+        onClick={handleDownvote}
         backgroundColor="inherit"
         color={voteValue === -1 ? downvoteColor : null}
         boxShadow="none !important"
@@ -97,7 +95,7 @@ UpvoteBar.propTypes = {
   numVotes: PropTypes.number,
   type: PropTypes.oneOf(['post', 'comment']),
   id: PropTypes.number,
-  voteValue: PropTypes.number,
+  voteValue: PropTypes.oneOf([-1, 0, 1, null]),
   submitVote: PropTypes.func,
 };
 
