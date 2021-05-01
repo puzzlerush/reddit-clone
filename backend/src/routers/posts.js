@@ -9,9 +9,9 @@ const router = express.Router()
 const selectPostStatement = `
   select
   p.id, p.type, p.title, p.body, p.created_at, p.updated_at,
-  coalesce(sum(pv.vote_value), 0) votes,
+  cast(coalesce(sum(pv.vote_value), 0) as int) votes,
   max(upv.vote_value) has_voted,
-  (select count(*) from comments c where p.id = c.post_id) number_of_comments,
+  (select cast(count(*) as int) from comments c where p.id = c.post_id) number_of_comments,
   max(u.username) author_name,
   max(sr.name) subreddit_name
   from posts p

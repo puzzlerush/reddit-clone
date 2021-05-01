@@ -23,34 +23,53 @@ export const submitVote = ({ type, id, voteValue, newNumVotes }) => async (
   if (!['post', 'comment'].includes(type)) {
     throw new Error('You can only submit votes for posts and comments');
   }
+
   try {
     dispatch({ type: 'SUBMIT_VOTE_REQUEST' });
 
-    const {
-      data: { vote_value },
-    } = await axios.post(`/votes/${type}`, {
-      item_id: id,
-      vote_value: voteValue,
-    });
-
     if (type === 'post') {
-      const post = postSelector(getState());
-      const newPost = {
-        ...post,
-        has_voted: vote_value,
-        votes: newNumVotes,
+      const changePostVotes = ({ has_voted, votes }) => {
+        let originalVoteValue;
+        let originalNumVotes;
+        const post = postSelector(getState());
+        const newPostDetails = { has_voted, votes };
+        const newPost = {
+          ...post,
+          ...newPostDetails,
+        };
+        if (post) {
+          ({ has_voted: originalVoteValue, votes: originalNumVotes } = post);
+          dispatch(setPost(newPost));
+        }
+        const postList = postListSelector(getState());
+        const postIndex = postList.findIndex((post) => post.id === id);
+        if (postIndex !== -1) {
+          ({ has_voted: originalVoteValue, votes: originalNumVotes } = postList[
+            postIndex
+          ]);
+          postList[postIndex] = {
+            ...postList[postIndex],
+            ...newPostDetails,
+          };
+          dispatch(setPostList([...postList]));
+        }
+        return { originalVoteValue, originalNumVotes };
       };
-      if (post) {
-        dispatch(setPost(newPost));
+      const { originalVoteValue, originalNumVotes } = changePostVotes({
+        has_voted: voteValue,
+        votes: newNumVotes,
+      });
+      try {
+        await axios.post(`/votes/${type}`, {
+          item_id: id,
+          vote_value: voteValue,
+        });
+      } catch (e) {
+        changePostVotes({
+          has_voted: originalVoteValue,
+          votes: originalNumVotes,
+        });
       }
-      const postList = postListSelector(getState());
-      const postIndex = postList.findIndex((post) => post.id === id);
-      postList[postIndex] = {
-        ...postList[postIndex],
-        has_voted: vote_value,
-        votes: newNumVotes,
-      };
-      dispatch(setPostList([...postList]));
     } else {
     }
 

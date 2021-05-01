@@ -37,7 +37,12 @@ const Post = ({
       dark="gray.700"
     >
       <Flex>
-        <UpvoteBar numVotes={numVotes} postId={id} voteValue={hasVoted} />
+        <UpvoteBar
+          type="post"
+          numVotes={numVotes}
+          id={id}
+          voteValue={hasVoted}
+        />
         <Box>
           <Text as="span" color={postDetailColor} fontWeight="bold">
             {`r/${subreddit}`}

@@ -18,7 +18,7 @@ const selectAllCommentsStatement = `
   select
   c.id, c.body, c.post_id, c.parent_comment_id, c.created_at, c.updated_at,
   max(u.username) author_name,
-  coalesce(sum(cv.vote_value), 0) votes,
+  cast(coalesce(sum(cv.vote_value), 0) as int) votes,
   max(ucv.vote_value) has_voted
   from comments c
   inner join users u on c.author_id = u.id
@@ -44,7 +44,7 @@ router.get('/:post_id', optionalAuth, async (req, res) => {
       select
       p.id, p.type, p.title, p.body, p.created_at, p.updated_at,
       max(u.username) author_name,
-      coalesce(sum(pv.vote_value), 0) votes,
+      cast(coalesce(sum(pv.vote_value), 0) as int) votes,
       max(upv.vote_value) has_voted,
       max(sr.name) subreddit_name
       from posts p

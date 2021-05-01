@@ -44,8 +44,8 @@ const PostList = ({ isLoading, error, postList, getPostList }) => {
               createdAt={created_at}
               title={title}
               body={body}
-              numComments={parseInt(number_of_comments, 10)}
-              numVotes={parseInt(votes, 10)}
+              numComments={number_of_comments}
+              numVotes={votes}
               hasVoted={has_voted}
             />
           </Box>

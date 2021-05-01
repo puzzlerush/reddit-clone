@@ -9,7 +9,14 @@ export const getPostList = () => async (dispatch) => {
   try {
     dispatch({ type: 'GET_POST_LIST_REQUEST' });
     const response = await axios.get('/posts');
-    dispatch(setPostList(response.data));
+    dispatch(
+      setPostList(
+        response.data.map((post) => ({
+          ...post,
+          votes: post.votes,
+        }))
+      )
+    );
     dispatch({ type: 'GET_POST_LIST_SUCCESS' });
   } catch (e) {
     dispatch({

@@ -1,18 +1,17 @@
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Flex, Text, IconButton } from '@chakra-ui/react';
 import { TriangleUpIcon, TriangleDownIcon } from '@chakra-ui/icons';
 import { submitVote } from '../actions';
 
 const UpvoteBar = ({
+  type = 'post',
   size = 6,
   numVotes,
-  postId,
-  commentId,
+  id,
   voteValue,
   submitVote,
 }) => {
-  numVotes = parseInt(numVotes, 10);
-
   const upvoteColor = 'orange.500';
   const downvoteColor = 'blue.500';
 
@@ -44,15 +43,15 @@ const UpvoteBar = ({
           voteValue === 1
             ? () =>
                 submitVote({
-                  type: 'post',
-                  id: postId,
+                  type,
+                  id,
                   voteValue: 0,
                   newNumVotes: numVotes - 1,
                 })
             : () =>
                 submitVote({
-                  type: 'post',
-                  id: postId,
+                  type,
+                  id,
                   voteValue: 1,
                   newNumVotes: numVotes + 1,
                 })
@@ -71,15 +70,15 @@ const UpvoteBar = ({
           voteValue === -1
             ? () =>
                 submitVote({
-                  type: 'post',
-                  id: postId,
+                  type,
+                  id,
                   voteValue: 0,
                   newNumVotes: numVotes + 1,
                 })
             : () =>
                 submitVote({
-                  type: 'post',
-                  id: postId,
+                  type,
+                  id,
                   voteValue: -1,
                   newNumVotes: numVotes - 1,
                 })
@@ -91,6 +90,15 @@ const UpvoteBar = ({
       />
     </Flex>
   );
+};
+
+UpvoteBar.propTypes = {
+  size: PropTypes.number,
+  numVotes: PropTypes.number,
+  type: PropTypes.oneOf(['post', 'comment']),
+  id: PropTypes.number,
+  voteValue: PropTypes.number,
+  submitVote: PropTypes.func,
 };
 
 const mapDispatchToProps = (dispatch) => ({
