@@ -1,7 +1,7 @@
 import axios from '../axios-config';
 import { setPost } from './post';
 import { setPostList } from './postList';
-import { setComments } from './comments';
+import { setComments, updateComment } from './comments';
 import { postSelector, postListSelector, commentsSelector } from '../selectors';
 
 export const getPostAndComments = (id) => async (dispatch) => {
@@ -38,6 +38,21 @@ export const editPost = ({ id, body }) => async (dispatch, getState) => {
   } catch (e) {
     dispatch({
       type: 'EDIT_POST_FAILURE',
+      message: e.message,
+      response: e.response,
+    });
+  }
+};
+
+export const editComment = ({ id, body }) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: 'EDIT_COMMENT_REQUEST' });
+    await axios.put(`/comments/${id}`, { body });
+    dispatch(updateComment({ id, body }));
+    dispatch({ type: 'EDIT_COMMENT_SUCCESS' });
+  } catch (e) {
+    dispatch({
+      type: 'EDIT_COMMENT_FAILURE',
       message: e.message,
       response: e.response,
     });

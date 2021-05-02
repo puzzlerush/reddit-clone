@@ -1,11 +1,20 @@
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Box, Flex, Text, Tooltip, useColorMode } from '@chakra-ui/react';
-import { ChatIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Flex,
+  HStack,
+  IconButton,
+  Text,
+  Tooltip,
+  useColorMode,
+} from '@chakra-ui/react';
+import { ChatIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import ThemedBox from './ThemedBox';
 import UpvoteBar from './UpvoteBar';
 import WriteCommentBox from './WriteCommentBox';
+import EditBox from './EditBox';
 import { userSelector } from '../selectors';
 
 const Comment = ({
@@ -23,6 +32,7 @@ const Comment = ({
   const commentDetailBgColor = colorMode === 'light' ? 'gray.100' : 'gray.600';
 
   const [showWriteReply, setShowWriteReply] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   return (
     <ThemedBox
       p={4}
@@ -39,7 +49,7 @@ const Comment = ({
           numVotes={numVotes}
           voteValue={hasVoted}
         />
-        <Box>
+        <Box flexGrow={1}>
           <Text as="span" isTruncated>
             {author}
           </Text>{' '}
@@ -48,7 +58,18 @@ const Comment = ({
               {moment(createdAt).fromNow()}
             </Tooltip>
           </Text>
-          <Text>{body}</Text>
+          {isEditing ? (
+            <Box mt={7}>
+              <EditBox
+                type="comment"
+                id={id}
+                onClose={() => setIsEditing(false)}
+                initialText={body}
+              />
+            </Box>
+          ) : (
+            <Text>{body}</Text>
+          )}
           <Flex
             mt={3}
             alignItems="center"
@@ -69,6 +90,15 @@ const Comment = ({
             </Box>
           </Flex>
         </Box>
+        {user && user.username && user.username === author && (
+          <HStack alignItems="flex-start">
+            <IconButton
+              onClick={() => setIsEditing(true)}
+              icon={<EditIcon />}
+            />
+            <IconButton icon={<DeleteIcon />} />
+          </HStack>
+        )}
       </Flex>
       {showWriteReply && (
         <Box mt={2}>

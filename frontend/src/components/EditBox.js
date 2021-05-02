@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import {
   Box,
@@ -8,21 +8,29 @@ import {
   Textarea,
   Button,
 } from '@chakra-ui/react';
-import { editPost } from '../actions';
+import { editComment, editPost } from '../actions';
 import { createLoadingAndErrorSelector } from '../selectors';
 
-const EditBox = ({ id, initialText, onClose, isLoading, error, editPost }) => {
+const EditBox = ({
+  type = 'post',
+  id,
+  initialText,
+  onClose,
+  isLoading,
+  error,
+  editPost,
+  editComment,
+}) => {
   const [value, setValue] = useState(initialText);
-  const saveError = useRef(error);
-
-  useEffect(() => {
-    saveError.current = error;
-  }, [error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await editPost({ id, body: value });
-    if (!saveError.current) {
+    if (type === 'post') {
+      await editPost({ id, body: value });
+    } else {
+      await editComment({ id, body: value });
+    }
+    if (!error && onClose && type === 'post') {
       onClose();
     }
   };
@@ -39,7 +47,11 @@ const EditBox = ({ id, initialText, onClose, isLoading, error, editPost }) => {
           <FormErrorMessage>{error}</FormErrorMessage>
         </FormControl>
         <HStack>
-          <Button isLoading={isLoading} type="submit">
+          <Button
+            isDisabled={value === initialText}
+            isLoading={isLoading}
+            type="submit"
+          >
             save
           </Button>
           <Button onClick={onClose}>cancel</Button>
@@ -50,7 +62,7 @@ const EditBox = ({ id, initialText, onClose, isLoading, error, editPost }) => {
 };
 
 const { loadingSelector, errorSelector } = createLoadingAndErrorSelector(
-  ['EDIT_POST'],
+  ['EDIT_POST', 'EDIT_COMMENT'],
   false
 );
 
@@ -61,6 +73,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   editPost: ({ id, body }) => dispatch(editPost({ id, body })),
+  editComment: ({ id, body }) => dispatch(editComment({ id, body })),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditBox);
