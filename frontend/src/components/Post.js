@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import {
@@ -5,12 +7,16 @@ import {
   Heading,
   Box,
   Flex,
+  HStack,
   Tooltip,
+  IconButton,
   useColorMode,
 } from '@chakra-ui/react';
-import { ChatIcon } from '@chakra-ui/icons';
+import { ChatIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import ThemedBox from './ThemedBox';
 import UpvoteBar from './UpvoteBar';
+import EditBox from './EditBox';
+import { userSelector } from '../selectors';
 
 const Post = ({
   id,
@@ -23,11 +29,14 @@ const Post = ({
   numVotes,
   hasVoted,
   numComments,
+  user,
 }) => {
   const { colorMode } = useColorMode();
   const postDetailColor = 'gray.500';
   const postDetailBgColor = colorMode === 'light' ? 'gray.100' : 'gray.600';
   const isTextPost = type === 'text';
+
+  const [isEditing, setIsEditing] = useState(false);
   return (
     <ThemedBox
       p={4}
@@ -43,7 +52,7 @@ const Post = ({
           id={id}
           voteValue={hasVoted}
         />
-        <Box>
+        <Box flexGrow={1}>
           <Text as="span" color={postDetailColor} fontWeight="bold">
             {`r/${subreddit}`}
           </Text>{' '}
@@ -70,7 +79,18 @@ const Post = ({
           >
             {title}
           </Heading>
-          {isTextPost && <Text>{body}</Text>}
+          {isTextPost ? (
+            isEditing ? (
+              <EditBox
+                type="post"
+                id={id}
+                initialText={body}
+                onClose={() => setIsEditing(false)}
+              />
+            ) : (
+              <Text>{body}</Text>
+            )
+          ) : null}
           <Flex
             mt={3}
             alignItems="center"
@@ -89,9 +109,25 @@ const Post = ({
             </Box>
           </Flex>
         </Box>
+        {user && user.username === author && (
+          <HStack alignItems="flex-start">
+            {isTextPost && !isEditing && (
+              <IconButton
+                onClick={() => setIsEditing(true)}
+                backgroundColor="inherit"
+                icon={<EditIcon />}
+              />
+            )}
+            <IconButton backgroundColor="inherit" icon={<DeleteIcon />} />
+          </HStack>
+        )}
       </Flex>
     </ThemedBox>
   );
 };
 
-export default Post;
+const mapStateToProps = (state) => ({
+  user: userSelector(state),
+});
+
+export default connect(mapStateToProps)(Post);

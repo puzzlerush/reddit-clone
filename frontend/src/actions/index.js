@@ -16,6 +16,34 @@ export const getPostAndComments = (id) => async (dispatch) => {
   }
 };
 
+export const editPost = ({ id, body }) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: 'EDIT_POST_REQUEST' });
+    await axios.put(`/posts/${id}`, { body });
+    const post = postSelector(getState());
+    if (post) {
+      dispatch(setPost({ ...post, body }));
+    }
+    const postList = postListSelector(getState());
+    const postIndex = postList.findIndex((post) => post.id === id);
+    if (postIndex !== -1) {
+      postList[postIndex] = {
+        ...postList[postIndex],
+        body,
+      };
+      dispatch(setPostList([...postList]));
+    }
+
+    dispatch({ type: 'EDIT_POST_SUCCESS' });
+  } catch (e) {
+    dispatch({
+      type: 'EDIT_POST_FAILURE',
+      message: e.message,
+      response: e.response,
+    });
+  }
+};
+
 export const submitVote = ({ type, id, voteValue, newNumVotes }) => async (
   dispatch,
   getState
