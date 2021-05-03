@@ -12,7 +12,7 @@ import {
   IconButton,
   useColorMode,
 } from '@chakra-ui/react';
-import { ChatIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ChatIcon, EditIcon } from '@chakra-ui/icons';
 import ThemedBox from './ThemedBox';
 import UpvoteBar from './UpvoteBar';
 import EditBox from './EditBox';
@@ -107,7 +107,7 @@ const Post = ({
               _hover={{ backgroundColor: postDetailBgColor }}
             >
               <ChatIcon mr={2} />
-              {numComments} comments
+              {numComments} {numComments === 1 ? 'comment' : 'comments'}
             </Box>
           </Flex>
         </Box>

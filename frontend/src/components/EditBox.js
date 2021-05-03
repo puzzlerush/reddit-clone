@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import {
   Box,
@@ -9,29 +9,44 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { startEditComment, startEditPost } from '../actions';
-import { createLoadingAndErrorSelector } from '../selectors';
+import { createErrorSelector } from '../selectors';
 
 const EditBox = ({
   type = 'post',
   id,
   initialText,
   onClose,
-  isLoading,
   error,
   startEditPost,
   startEditComment,
 }) => {
   const [value, setValue] = useState(initialText);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const hasError = useRef(error);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (isMounted) {
+      hasError.current = error;
+    }
+    return () => {
+      isMounted = false;
+    };
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     if (type === 'post') {
       await startEditPost({ id, body: value });
     } else {
       await startEditComment({ id, body: value });
     }
-    if (!error && onClose && type === 'post') {
+    if (!hasError.current) {
       onClose();
+    } else {
+      setIsLoading(false);
     }
   };
 
@@ -61,13 +76,9 @@ const EditBox = ({
   );
 };
 
-const { loadingSelector, errorSelector } = createLoadingAndErrorSelector(
-  ['EDIT_POST', 'EDIT_COMMENT'],
-  false
-);
+const errorSelector = createErrorSelector(['EDIT_POST', 'EDIT_COMMENT']);
 
 const mapStateToProps = (state) => ({
-  isLoading: loadingSelector(state),
   error: errorSelector(state),
 });
 
