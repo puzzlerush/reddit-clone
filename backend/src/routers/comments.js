@@ -48,7 +48,7 @@ router.get('/:post_id', optionalAuth, async (req, res) => {
       max(upv.vote_value) has_voted,
       max(sr.name) subreddit_name
       from posts p
-      inner join users u on p.author_id = u.id
+      left join users u on p.author_id = u.id
       inner join subreddits sr on p.subreddit_id = sr.id
       left join post_votes pv on p.id = pv.post_id
       left join post_votes upv on upv.post_id = p.id and upv.user_id = $1

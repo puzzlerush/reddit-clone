@@ -10,11 +10,12 @@ import {
   Tooltip,
   useColorMode,
 } from '@chakra-ui/react';
-import { ChatIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ChatIcon, EditIcon } from '@chakra-ui/icons';
 import ThemedBox from './ThemedBox';
 import UpvoteBar from './UpvoteBar';
 import WriteCommentBox from './WriteCommentBox';
 import EditBox from './EditBox';
+import DeleteButton from './DeleteButton';
 import { userSelector } from '../selectors';
 
 const Comment = ({
@@ -93,10 +94,11 @@ const Comment = ({
         {user && user.username && user.username === author && (
           <HStack alignItems="flex-start">
             <IconButton
+              backgroundColor="inherit"
               onClick={() => setIsEditing(true)}
               icon={<EditIcon />}
             />
-            <IconButton icon={<DeleteIcon />} />
+            <DeleteButton />
           </HStack>
         )}
       </Flex>

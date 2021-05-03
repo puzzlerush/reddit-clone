@@ -3,9 +3,9 @@ const commentsReducer = (state = [], action) => {
     case 'SET_COMMENTS':
       return action.comments;
     case 'UPDATE_COMMENT':
-      const { id, body } = action;
+      const { id, updates } = action;
       return state.map((comment) =>
-        comment.id === id ? { ...comment, body } : comment
+        comment.id === id ? { ...comment, ...updates } : comment
       );
     default:
       return state;

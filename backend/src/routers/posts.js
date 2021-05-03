@@ -15,7 +15,7 @@ const selectPostStatement = `
   max(u.username) author_name,
   max(sr.name) subreddit_name
   from posts p
-  inner join users u on p.author_id = u.id
+  left join users u on p.author_id = u.id
   inner join subreddits sr on p.subreddit_id = sr.id
   left join post_votes pv on p.id = pv.post_id
   left join post_votes upv on p.id = upv.post_id and upv.user_id = $1
@@ -25,7 +25,11 @@ const selectPostStatement = `
 router.get('/', optionalAuth, async (req, res) => {
   try {
     const user_id = req.user ? req.user.id : -1
-    const { rows } = await query(`${selectPostStatement} order by votes desc`, [user_id])
+    const { rows } = await query(`
+      ${selectPostStatement}
+      having p.title is not null
+      order by votes desc
+    `, [user_id])
     res.send(rows)
   } catch (e) {
     res.status(500).send({ error: e.message })
@@ -140,8 +144,20 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(401).send({ error: 'You must be the post creator to delete it' })
     }
 
-    const deletePostStatement = `delete from posts where id = $1 returning *`
-    const { rows: [deletedPost] } = await query(deletePostStatement, [id])
+    // const deletePostStatement = `delete from posts where id = $1 returning *`
+    // const { rows: [deletedPost] } = await query(deletePostStatement, [id])
+    // res.send(deletedPost)
+
+    const setFieldsToNullStatement = `
+      update posts
+      set title = null,
+          body = null,
+          author_id = null
+      where id = $1
+      returning *
+    `
+
+    const { rows: [deletedPost] } = await query(setFieldsToNullStatement, [id])
     res.send(deletedPost)
   } catch (e) {
     res.status(400).send({ error: e.message })

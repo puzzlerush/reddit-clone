@@ -5,6 +5,17 @@ export const setPost = (post) => ({
   post,
 });
 
+export const editPost = (id, updates) => ({
+  type: 'UPDATE_POST',
+  id,
+  updates,
+});
+
+export const deletePost = (id) => ({
+  type: 'DELETE_POST',
+  id,
+});
+
 export const submitPost = (postDetails) => async (dispatch) => {
   const { type, title, body, subreddit } = postDetails;
   try {

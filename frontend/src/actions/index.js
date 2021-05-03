@@ -1,8 +1,7 @@
 import axios from '../axios-config';
-import { setPost } from './post';
-import { setPostList } from './postList';
+import { setPost, editPost, deletePost } from './post';
 import { setComments, updateComment } from './comments';
-import { postSelector, postListSelector, commentsSelector } from '../selectors';
+import { postListSelector, commentsSelector } from '../selectors';
 
 export const getPostAndComments = (id) => async (dispatch) => {
   try {
@@ -16,23 +15,11 @@ export const getPostAndComments = (id) => async (dispatch) => {
   }
 };
 
-export const editPost = ({ id, body }) => async (dispatch, getState) => {
+export const startEditPost = ({ id, body }) => async (dispatch) => {
   try {
     dispatch({ type: 'EDIT_POST_REQUEST' });
     await axios.put(`/posts/${id}`, { body });
-    const post = postSelector(getState());
-    if (post) {
-      dispatch(setPost({ ...post, body }));
-    }
-    const postList = postListSelector(getState());
-    const postIndex = postList.findIndex((post) => post.id === id);
-    if (postIndex !== -1) {
-      postList[postIndex] = {
-        ...postList[postIndex],
-        body,
-      };
-      dispatch(setPostList([...postList]));
-    }
+    dispatch(editPost(id, { body }));
 
     dispatch({ type: 'EDIT_POST_SUCCESS' });
   } catch (e) {
@@ -44,11 +31,26 @@ export const editPost = ({ id, body }) => async (dispatch, getState) => {
   }
 };
 
-export const editComment = ({ id, body }) => async (dispatch, getState) => {
+export const startDeletePost = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: 'DELETE_POST_REQUEST' });
+    await axios.delete(`/posts/${id}`);
+    dispatch(deletePost(id));
+    dispatch({ type: 'DELETE_POST_SUCCESS' });
+  } catch (e) {
+    dispatch({
+      type: 'DELETE_POST_FAILURE',
+      message: e.message,
+      response: e.response,
+    });
+  }
+};
+
+export const startEditComment = ({ id, body }) => async (dispatch) => {
   try {
     dispatch({ type: 'EDIT_COMMENT_REQUEST' });
     await axios.put(`/comments/${id}`, { body });
-    dispatch(updateComment({ id, body }));
+    dispatch(updateComment(id, { body }));
     dispatch({ type: 'EDIT_COMMENT_SUCCESS' });
   } catch (e) {
     dispatch({
@@ -69,30 +71,10 @@ export const submitVote = ({ type, id, voteValue, newNumVotes }) => async (
 
   if (type === 'post') {
     const changePostVotes = ({ has_voted, votes }) => {
-      let originalVoteValue;
-      let originalNumVotes;
-      const post = postSelector(getState());
       const newPostDetails = { has_voted, votes };
-      const newPost = {
-        ...post,
-        ...newPostDetails,
-      };
-      if (post) {
-        ({ has_voted: originalVoteValue, votes: originalNumVotes } = post);
-        dispatch(setPost(newPost));
-      }
-      const postList = postListSelector(getState());
-      const postIndex = postList.findIndex((post) => post.id === id);
-      if (postIndex !== -1) {
-        ({ has_voted: originalVoteValue, votes: originalNumVotes } = postList[
-          postIndex
-        ]);
-        postList[postIndex] = {
-          ...postList[postIndex],
-          ...newPostDetails,
-        };
-        dispatch(setPostList([...postList]));
-      }
+      const { has_voted: originalVoteValue, votes: originalNumVotes } =
+        postListSelector(getState()).find((post) => post.id === id) || {};
+      dispatch(editPost(id, newPostDetails));
       return { originalVoteValue, originalNumVotes };
     };
 
@@ -114,21 +96,9 @@ export const submitVote = ({ type, id, voteValue, newNumVotes }) => async (
     }
   } else {
     const changeCommentVote = ({ has_voted, votes }) => {
-      let originalVoteValue;
-      let originalNumVotes;
-      const comments = commentsSelector(getState());
-      const commentIndex = comments.findIndex((comment) => comment.id === id);
-      if (commentIndex !== -1) {
-        ({ has_voted: originalVoteValue, votes: originalNumVotes } = comments[
-          commentIndex
-        ]);
-        comments[commentIndex] = {
-          ...comments[commentIndex],
-          has_voted,
-          votes,
-        };
-        dispatch(setComments([...comments]));
-      }
+      const { has_voted: originalVoteValue, votes: originalNumVotes } =
+        commentsSelector(getState()).find((comment) => comment.id === id) || {};
+      dispatch(updateComment(id, { has_voted, votes }));
       return { originalVoteValue, originalNumVotes };
     };
 

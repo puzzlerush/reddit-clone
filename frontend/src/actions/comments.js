@@ -6,10 +6,10 @@ export const setComments = (comments) => ({
   comments,
 });
 
-export const updateComment = ({ id, body }) => ({
+export const updateComment = (id, updates) => ({
   type: 'UPDATE_COMMENT',
   id,
-  body,
+  updates,
 });
 
 export const submitComment = (commentDetails) => async (dispatch, getState) => {

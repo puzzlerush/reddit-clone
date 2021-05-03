@@ -16,6 +16,7 @@ import { ChatIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import ThemedBox from './ThemedBox';
 import UpvoteBar from './UpvoteBar';
 import EditBox from './EditBox';
+import DeleteButton from './DeleteButton';
 import { userSelector } from '../selectors';
 
 const Post = ({
@@ -37,6 +38,7 @@ const Post = ({
   const isTextPost = type === 'text';
 
   const [isEditing, setIsEditing] = useState(false);
+  const deletedText = '[deleted]';
   return (
     <ThemedBox
       p={4}
@@ -59,7 +61,7 @@ const Post = ({
           <Text as="span" color={postDetailColor}>
             {`Posted by `}
           </Text>
-          <Text as="span">u/{author}</Text>
+          <Text as="span">{author ? `u/${author}` : deletedText}</Text>
           <Text as="span" color={postDetailColor}>
             {' '}
             <Tooltip label={moment(createdAt).format('LLLL')}>
@@ -77,7 +79,7 @@ const Post = ({
             fontSize="1.5em"
             fontWeight="500"
           >
-            {title}
+            {title || deletedText}
           </Heading>
           {isTextPost ? (
             isEditing ? (
@@ -118,7 +120,7 @@ const Post = ({
                 icon={<EditIcon />}
               />
             )}
-            <IconButton backgroundColor="inherit" icon={<DeleteIcon />} />
+            <DeleteButton id={id} />
           </HStack>
         )}
       </Flex>

@@ -8,7 +8,7 @@ import {
   Textarea,
   Button,
 } from '@chakra-ui/react';
-import { editComment, editPost } from '../actions';
+import { startEditComment, startEditPost } from '../actions';
 import { createLoadingAndErrorSelector } from '../selectors';
 
 const EditBox = ({
@@ -18,17 +18,17 @@ const EditBox = ({
   onClose,
   isLoading,
   error,
-  editPost,
-  editComment,
+  startEditPost,
+  startEditComment,
 }) => {
   const [value, setValue] = useState(initialText);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (type === 'post') {
-      await editPost({ id, body: value });
+      await startEditPost({ id, body: value });
     } else {
-      await editComment({ id, body: value });
+      await startEditComment({ id, body: value });
     }
     if (!error && onClose && type === 'post') {
       onClose();
@@ -72,8 +72,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  editPost: ({ id, body }) => dispatch(editPost({ id, body })),
-  editComment: ({ id, body }) => dispatch(editComment({ id, body })),
+  startEditPost: ({ id, body }) => dispatch(startEditPost({ id, body })),
+  startEditComment: ({ id, body }) => dispatch(startEditComment({ id, body })),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditBox);
