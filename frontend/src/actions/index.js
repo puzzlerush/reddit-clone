@@ -1,6 +1,6 @@
 import axios from '../axios-config';
 import { setPost, editPost, deletePost } from './post';
-import { setComments, updateComment } from './comments';
+import { setComments, updateComment, deleteComment } from './comments';
 import { postListSelector, commentsSelector } from '../selectors';
 
 export const getPostAndComments = (id) => async (dispatch) => {
@@ -55,6 +55,21 @@ export const startEditComment = ({ id, body }) => async (dispatch) => {
   } catch (e) {
     dispatch({
       type: 'EDIT_COMMENT_FAILURE',
+      message: e.message,
+      response: e.response,
+    });
+  }
+};
+
+export const startDeleteComment = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: 'DELETE_COMMENT_REQUEST' });
+    await axios.delete(`/comments/${id}`);
+    dispatch(deleteComment(id));
+    dispatch({ type: 'DELETE_COMMENT_SUCCESS' });
+  } catch (e) {
+    dispatch({
+      type: 'DELETE_COMMENT_FAILURE',
       message: e.message,
       response: e.response,
     });

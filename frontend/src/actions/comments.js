@@ -12,6 +12,11 @@ export const updateComment = (id, updates) => ({
   updates,
 });
 
+export const deleteComment = (id) => ({
+  type: 'DELETE_COMMENT',
+  id,
+});
+
 export const submitComment = (commentDetails) => async (dispatch, getState) => {
   try {
     const { body, post_id, parent_comment_id } = commentDetails;

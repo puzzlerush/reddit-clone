@@ -120,7 +120,7 @@ const Post = ({
                 icon={<EditIcon />}
               />
             )}
-            <DeleteButton id={id} />
+            <DeleteButton type="post" id={id} />
           </HStack>
         )}
       </Flex>

@@ -29,7 +29,8 @@ const getCommentsWithChildren = (comments) => {
     }
   });
   return commentsWithChildren.filter(
-    ({ parent_comment_id }) => parent_comment_id === null
+    ({ parent_comment_id, body, children }) =>
+      parent_comment_id === null && (body !== null || children.length > 0)
   );
 };
 
@@ -67,7 +68,7 @@ const CommentsPage = ({
     votes,
     has_voted,
   } = post;
-  const numComments = comments.length;
+  const numComments = comments.filter(({ body }) => body !== null).length;
 
   const rootComments = getCommentsWithChildren(comments);
   return (

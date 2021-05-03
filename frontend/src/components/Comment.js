@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { connect } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
 import moment from 'moment';
 import {
   Box,
@@ -34,6 +35,9 @@ const Comment = ({
 
   const [showWriteReply, setShowWriteReply] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const history = useHistory();
+  const location = useLocation();
+  const deletedText = '[deleted]';
   return (
     <ThemedBox
       p={4}
@@ -52,7 +56,7 @@ const Comment = ({
         />
         <Box flexGrow={1}>
           <Text as="span" isTruncated>
-            {author}
+            {author === null ? deletedText : author}
           </Text>{' '}
           <Text as="span" color="gray.500">
             <Tooltip label={moment(createdAt).format('LLLL')}>
@@ -69,7 +73,7 @@ const Comment = ({
               />
             </Box>
           ) : (
-            <Text>{body}</Text>
+            <Text>{body === null ? deletedText : body}</Text>
           )}
           <Flex
             mt={3}
@@ -84,7 +88,18 @@ const Comment = ({
                 backgroundColor: commentDetailBgColor,
                 cursor: 'pointer',
               }}
-              onClick={() => setShowWriteReply(!showWriteReply)}
+              onClick={() => {
+                if (user) {
+                  setShowWriteReply(!showWriteReply);
+                } else {
+                  history.push({
+                    pathname: '/login',
+                    state: {
+                      prevPathname: location.pathname,
+                    },
+                  });
+                }
+              }}
             >
               <ChatIcon mr={2} />
               Reply
@@ -93,12 +108,14 @@ const Comment = ({
         </Box>
         {user && user.username && user.username === author && (
           <HStack alignItems="flex-start">
-            <IconButton
-              backgroundColor="inherit"
-              onClick={() => setIsEditing(true)}
-              icon={<EditIcon />}
-            />
-            <DeleteButton />
+            {!isEditing && (
+              <IconButton
+                backgroundColor="inherit"
+                onClick={() => setIsEditing(true)}
+                icon={<EditIcon />}
+              />
+            )}
+            <DeleteButton type="comment" id={id} />
           </HStack>
         )}
       </Flex>

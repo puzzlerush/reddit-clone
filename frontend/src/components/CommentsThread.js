@@ -70,7 +70,11 @@ class CommentsThread extends Component {
                 </Box>
               )}
               <Box flexGrow={1} ml={4}>
-                <CommentsThread comments={children} />
+                <CommentsThread
+                  comments={children.filter(
+                    ({ body, children }) => body !== null || children.length > 0
+                  )}
+                />
               </Box>
             </Flex>
           )}

@@ -21,7 +21,7 @@ const selectAllCommentsStatement = `
   cast(coalesce(sum(cv.vote_value), 0) as int) votes,
   max(ucv.vote_value) has_voted
   from comments c
-  inner join users u on c.author_id = u.id
+  left join users u on c.author_id = u.id
   left join comment_votes cv on c.id = cv.comment_id
   left join comment_votes ucv on ucv.comment_id = c.id and ucv.user_id = $1
   group by c.id
@@ -146,9 +146,19 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(403).send({ error: 'You must be the comment author to delete it' })
     }
 
-    const deleteCommentStatement = `delete from comments where id = $1 returning *`
-    const { rows: [deletedComment] } = await query(deleteCommentStatement, [id])
+    // const deleteCommentStatement = `delete from comments where id = $1 returning *`
+    // const { rows: [deletedComment] } = await query(deleteCommentStatement, [id])
     
+    const setFieldsToNullStatement = `
+      update comments
+      set body = null,
+          author_id = null
+      where id = $1
+      returning *
+    `
+
+    const { rows: [deletedComment] } = await query(setFieldsToNullStatement, [id])
+
     res.send(deletedComment)
   } catch (e) {
     res.status(400).send({ error: e.message })
