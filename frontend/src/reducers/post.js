@@ -2,7 +2,7 @@ const postReducer = (state = null, action) => {
   switch (action.type) {
     case 'SET_POST':
       return action.post;
-    case 'UPDATE_POST':
+    case 'EDIT_POST':
       const { updates } = action;
       return { ...state, ...updates };
     case 'DELETE_POST':

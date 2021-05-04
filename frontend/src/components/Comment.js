@@ -95,6 +95,7 @@ const Comment = ({
                   history.push({
                     pathname: '/login',
                     state: {
+                      requireAuth: 'Log in to reply to comments',
                       prevPathname: location.pathname,
                     },
                   });

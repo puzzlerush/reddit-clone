@@ -6,7 +6,7 @@ export const setPost = (post) => ({
 });
 
 export const editPost = (id, updates) => ({
-  type: 'UPDATE_POST',
+  type: 'EDIT_POST',
   id,
   updates,
 });

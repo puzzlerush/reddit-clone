@@ -1,7 +1,7 @@
 import axios from '../axios-config';
 import { setPost, editPost, deletePost } from './post';
 import { setComments, updateComment, deleteComment } from './comments';
-import { postListSelector, commentsSelector } from '../selectors';
+import { postListSelector, commentsSelector, postSelector } from '../selectors';
 
 export const getPostAndComments = (id) => async (dispatch) => {
   try {
@@ -88,7 +88,8 @@ export const submitVote = ({ type, id, voteValue, newNumVotes }) => async (
     const changePostVotes = ({ has_voted, votes }) => {
       const newPostDetails = { has_voted, votes };
       const { has_voted: originalVoteValue, votes: originalNumVotes } =
-        postListSelector(getState()).find((post) => post.id === id) || {};
+        postListSelector(getState()).find((post) => post.id === id) ||
+        postSelector(getState());
       dispatch(editPost(id, newPostDetails));
       return { originalVoteValue, originalNumVotes };
     };

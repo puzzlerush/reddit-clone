@@ -1,4 +1,8 @@
 import axios from '../axios-config';
+import { editPost } from './post';
+import { setPostList } from './postList';
+import { setComments } from './comments';
+import { commentsSelector, postListSelector } from '../selectors';
 
 export const login = (user, token) => ({
   type: 'LOGIN',
@@ -27,11 +31,28 @@ export const startLogin = (username, password) => async (dispatch) => {
   }
 };
 
-export const startLogout = () => async (dispatch) => {
+export const startLogout = () => async (dispatch, getState) => {
   try {
     dispatch({ type: 'LOGOUT_REQUEST' });
     await axios.post('/users/logout');
     dispatch(logout());
+    dispatch(editPost(1, { has_voted: null }));
+    dispatch(
+      setPostList(
+        postListSelector(getState()).map((post) => ({
+          ...post,
+          has_voted: null,
+        }))
+      )
+    );
+    dispatch(
+      setComments(
+        commentsSelector(getState()).map((comment) => ({
+          ...comment,
+          has_voted: null,
+        }))
+      )
+    );
     dispatch({ type: 'LOGOUT_SUCCESS' });
   } catch (e) {
     dispatch({
