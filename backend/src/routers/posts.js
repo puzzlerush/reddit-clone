@@ -24,12 +24,33 @@ const selectPostStatement = `
 
 router.get('/', optionalAuth, async (req, res) => {
   try {
+    const allowedFilters = ['subreddit', 'author']
+    const columnNamesEnum = {
+      'subreddit': 'max(sr.name)',
+      'author': 'max(u.username)'
+    }
+    const validFilters = Object.keys(req.query).every((key) => allowedFilters.includes(key))
+    if (!validFilters) {
+      return res.status(400).send({ error: `The only allowed filters are ${allowedFilters.join(', ')}`})
+    } 
+
     const user_id = req.user ? req.user.id : -1
-    const { rows } = await query(`
+    const queryArgs = [user_id]
+    
+    const havingAndClause = []
+    Object.entries(req.query).forEach(([filterName, filterValue]) => {
+      queryArgs.push(filterValue)
+      havingAndClause.push(`${columnNamesEnum[filterName]} = $${queryArgs.length}`)
+    })
+    
+    const selectFilteredPostsStatement = `
       ${selectPostStatement}
       having p.title is not null
+      ${havingAndClause.length > 0 ? 'and' : ''} ${havingAndClause.join(' and ')}
       order by votes desc
-    `, [user_id])
+    `
+
+    const { rows } = await query(selectFilteredPostsStatement, queryArgs)
     res.send(rows)
   } catch (e) {
     res.status(500).send({ error: e.message })

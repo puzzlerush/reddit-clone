@@ -51,7 +51,7 @@ class CreatePostPage extends React.Component {
         body: postType === 'text' ? body : url,
         subreddit,
       });
-      history.push(`/comments/${id}`);
+      history.push(`/r/${subreddit}/comments/${id}`);
     } catch (err) {}
   };
 

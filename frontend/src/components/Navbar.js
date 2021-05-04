@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Box,
+  Flex,
   Heading,
   Spacer,
   HStack,
@@ -11,15 +13,37 @@ import {
   MenuList,
   MenuItem,
   MenuDivider,
+  Alert,
+  AlertIcon,
+  CircularProgress,
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import ThemedBox from './ThemedBox';
-import { userSelector } from '../selectors';
+import {
+  userSelector,
+  subredditsSelector,
+  createLoadingAndErrorSelector,
+} from '../selectors';
 import { startLogout } from '../actions/auth';
+import { getSubreddits } from '../actions/subreddits';
 import LoginAndRegisterButtons from './LoginAndRegisterButtons';
 
-const Navbar = ({ user, startLogout }) => {
+const Navbar = ({
+  user,
+  subreddits,
+  isLoading,
+  error,
+  startLogout,
+  getSubreddits,
+}) => {
+  const location = useLocation();
+  const subredditName = location.pathname.match(/r\/[^\/]+/);
+
+  useEffect(() => {
+    getSubreddits();
+  }, []);
+
   return (
     <ThemedBox
       py={2}
@@ -33,9 +57,35 @@ const Navbar = ({ user, startLogout }) => {
         weddit
       </Heading>
       <HStack display={['none', 'flex']}>
-        <Button as={Link} to="/">
-          Home
-        </Button>
+        <Menu>
+          <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+            {subredditName || 'Home'}
+          </MenuButton>
+          <MenuList>
+            <MenuItem as={Link} to="/">
+              Home
+            </MenuItem>
+            <MenuDivider />
+            {subreddits.map(({ name }) => (
+              <MenuItem
+                key={name}
+                as={Link}
+                to={`/r/${name}`}
+              >{`r/${name}`}</MenuItem>
+            ))}
+            {error && (
+              <Alert status="error">
+                <AlertIcon />
+                Error fetching subreddits
+              </Alert>
+            )}
+            {isLoading && (
+              <Flex justifyContent="center">
+                <CircularProgress isIndeterminate />
+              </Flex>
+            )}
+          </MenuList>
+        </Menu>
         {user && (
           <Button as={Link} to="/submit">
             Submit
@@ -76,12 +126,21 @@ const Navbar = ({ user, startLogout }) => {
     </ThemedBox>
   );
 };
+
+const { loadingSelector, errorSelector } = createLoadingAndErrorSelector([
+  'GET_SUBREDDITS',
+]);
+
 const mapStateToProps = (state) => ({
+  isLoading: loadingSelector(state),
+  error: errorSelector(state),
+  subreddits: subredditsSelector(state),
   user: userSelector(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   startLogout: () => dispatch(startLogout()),
+  getSubreddits: () => dispatch(getSubreddits()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

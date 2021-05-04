@@ -1,14 +1,17 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Box, Alert, AlertIcon } from '@chakra-ui/react';
+import { useParams } from 'react-router-dom';
+import { Box, Alert, AlertIcon, Heading } from '@chakra-ui/react';
 import Post from './Post';
 import { createLoadingAndErrorSelector, postListSelector } from '../selectors';
 import { getPostList } from '../actions/postList';
 
 const PostList = ({ isLoading, error, postList, getPostList }) => {
+  const { subreddit } = useParams();
+
   useEffect(() => {
-    getPostList();
-  }, [getPostList]);
+    getPostList({ subreddit });
+  }, [getPostList, subreddit]);
 
   if (isLoading) {
     return null;
@@ -22,6 +25,7 @@ const PostList = ({ isLoading, error, postList, getPostList }) => {
   }
   return (
     <Box>
+      <Heading>{subreddit ? `r/${subreddit}` : 'Home'}</Heading>
       {postList.map(
         ({
           id,
@@ -66,7 +70,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getPostList: () => dispatch(getPostList()),
+  getPostList: (filters) => dispatch(getPostList(filters)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostList);
