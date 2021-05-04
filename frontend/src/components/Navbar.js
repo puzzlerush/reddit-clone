@@ -109,7 +109,9 @@ const Navbar = ({
               </MenuItem>
               <MenuDivider />
             </Box>
-            <MenuItem>My Account</MenuItem>
+            <MenuItem as={Link} to="/subreddits/create">
+              Create subreddit
+            </MenuItem>
             <MenuItem
               onClick={async () => {
                 await startLogout();

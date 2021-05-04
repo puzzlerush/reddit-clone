@@ -11,6 +11,7 @@ import RegisterPage from './components/RegisterPage';
 import CreatePostPage from './components/CreatePostPage';
 import PostList from './components/PostList';
 import ThemedBox from './components/ThemedBox';
+import CreateSubredditPage from './components/CreateSubredditPage';
 
 function App() {
   return (
@@ -32,6 +33,9 @@ function App() {
                 </PublicRoute>
                 <PrivateRoute path="/submit">
                   <CreatePostPage />
+                </PrivateRoute>
+                <PrivateRoute path="/subreddits/create">
+                  <CreateSubredditPage />
                 </PrivateRoute>
                 <Route path="/r/:subreddit">
                   <PostList />
