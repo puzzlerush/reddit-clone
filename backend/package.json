@@ -3,11 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "12.18.3",
+    "npm": "6.14.6"
+  },
   "scripts": {
-    "start": "node src/index.js",
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
     "prepare-test-data": "env-cmd -f ./config/dev.env node src/db/prepare-test-data.js",
-    "db-migrate": "env-cmd -f ./config/dev.env node node_modules/db-migrate/bin/db-migrate"
+    "db-migrate": "node node_modules/db-migrate/bin/db-migrate",
+    "db-migrate-dev": "env-cmd -f ./config/dev.env npm run db-migrate",
+    "start": "node src/index.js",
+    "heroku-postbuild": "npm run db-migrate up"
   },
   "author": "",
   "license": "ISC",

@@ -1,6 +1,6 @@
 const { Pool } = require('pg')
 
-const config = {
+const devConfig = {
   host: process.env.PG_HOST,
   port: process.env.PG_PORT,
   database: process.env.PG_DBNAME,
@@ -8,7 +8,12 @@ const config = {
   password: process.env.PG_PASSWORD,
 }
 
-const pool = new Pool(config)
+const prodConfig = {
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+}
+
+const pool = new Pool(process.env.NODE_ENV === 'production' ? prodConfig : devConfig)
 
 module.exports = {
   query: (text, params) => {
