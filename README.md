@@ -13,11 +13,19 @@ Full stack reddit clone built with React, Redux, Node.js, Express, and PostgreSQ
 - Light and dark mode
 - ... and more to come!
 
+## Screenshots
+<p align="center">
+  <a href="#">
+    <img src="./screenshot.png" alt="Comments page for a post">
+  </a>
+</p>
+
 ## Installation
 1. Clone this repository
 
 ```
 git clone https://github.com/tacticaltofu/reddit-clone.git
+cd reddit-clone
 ```
 
 2. Install backend dependencies
@@ -37,10 +45,11 @@ npm install
 4. Create config folder in the backend
 
 ```
+cd backend
 mkdir config
 ```
 
-5. Configure environment variables. Create a dev.env file in the config folder, and paste the following
+5. Configure environment variables. Create a `dev.env` file in the config folder, and paste the following (filling in your own postgres password and JWT secret)
 ```
 PORT=5000
 PG_HOST=localhost
@@ -52,7 +61,7 @@ JWT_SECRET=<YOUR_SECRET>
 
 ```
 
-6. Create a Postgres database named 'reddit-clone'
+6. Create a postgres database named 'reddit-clone'
 
 7. Run the database migrations
 
