@@ -13,7 +13,7 @@
     "db-migrate": "node node_modules/db-migrate/bin/db-migrate",
     "db-migrate-dev": "env-cmd -f ./config/dev.env npm run db-migrate",
     "start": "node src/index.js",
-    "heroku-postbuild": "npm run db-migrate up"
+    "heroku-postbuild": "npm run db-migrate -- up --env prod"
   },
   "author": "",
   "license": "ISC",
