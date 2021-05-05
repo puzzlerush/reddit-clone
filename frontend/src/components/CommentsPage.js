@@ -1,7 +1,15 @@
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Box, Flex, Text, Heading, Alert, AlertIcon } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Text,
+  Heading,
+  Alert,
+  AlertIcon,
+  CircularProgress,
+} from '@chakra-ui/react';
 import Post from './Post';
 import CommentsThread from './CommentsThread';
 import WriteCommentBox from './WriteCommentBox';
@@ -48,7 +56,11 @@ const CommentsPage = ({
   }, [getPostAndComments, id]);
 
   if (isLoading) {
-    return null;
+    return (
+      <Flex m={10} justifyContent="center" alignItems="center">
+        <CircularProgress isIndeterminate />
+      </Flex>
+    );
   } else if (error) {
     return (
       <Alert status="error">

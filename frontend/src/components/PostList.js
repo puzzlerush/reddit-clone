@@ -1,7 +1,15 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Box, Alert, AlertIcon, Heading, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Alert,
+  AlertIcon,
+  Heading,
+  Text,
+  CircularProgress,
+} from '@chakra-ui/react';
 import Post from './Post';
 import { createLoadingAndErrorSelector, postListSelector } from '../selectors';
 import { getPostList } from '../actions/postList';
@@ -14,7 +22,11 @@ const PostList = ({ isLoading, error, postList, getPostList }) => {
   }, [getPostList, subreddit]);
 
   if (isLoading) {
-    return null;
+    return (
+      <Flex m={10} justifyContent="center" alignItems="center">
+        <CircularProgress isIndeterminate />
+      </Flex>
+    );
   } else if (error) {
     return (
       <Alert status="error">
