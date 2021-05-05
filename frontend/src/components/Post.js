@@ -17,6 +17,7 @@ import ThemedBox from './ThemedBox';
 import UpvoteBar from './UpvoteBar';
 import EditBox from './EditBox';
 import DeleteButton from './DeleteButton';
+import ChakraMarkdown from './ChakraMarkdown';
 import { userSelector } from '../selectors';
 
 const Post = ({
@@ -95,7 +96,9 @@ const Post = ({
                 onClose={() => setIsEditing(false)}
               />
             ) : (
-              <Text>{body}</Text>
+              <Box listStylePosition="inside">
+                <ChakraMarkdown>{body}</ChakraMarkdown>
+              </Box>
             )
           ) : null}
           <Flex

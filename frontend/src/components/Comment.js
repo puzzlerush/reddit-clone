@@ -17,6 +17,7 @@ import UpvoteBar from './UpvoteBar';
 import WriteCommentBox from './WriteCommentBox';
 import EditBox from './EditBox';
 import DeleteButton from './DeleteButton';
+import ChakraMarkdown from './ChakraMarkdown';
 import { userSelector } from '../selectors';
 
 const Comment = ({
@@ -73,7 +74,13 @@ const Comment = ({
               />
             </Box>
           ) : (
-            <Text>{body === null ? deletedText : body}</Text>
+            <Text>
+              {body === null ? (
+                deletedText
+              ) : (
+                <ChakraMarkdown>{body}</ChakraMarkdown>
+              )}
+            </Text>
           )}
           <Flex
             mt={3}
