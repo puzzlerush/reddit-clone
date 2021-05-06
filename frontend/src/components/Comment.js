@@ -78,7 +78,9 @@ const Comment = ({
               {body === null ? (
                 deletedText
               ) : (
-                <ChakraMarkdown>{body}</ChakraMarkdown>
+                <Box listStylePosition="inside">
+                  <ChakraMarkdown>{body}</ChakraMarkdown>
+                </Box>
               )}
             </Text>
           )}
