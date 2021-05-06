@@ -53,12 +53,16 @@ const Navbar = ({
       alignItems="center"
       mb={7}
     >
-      <Heading mx={4} fontSize={['1.39rem', '2.25rem']}>
+      <Heading
+        ml={[2, 4]}
+        display={user ? 'block' : ['none', 'block']}
+        fontSize={['1.3rem', '2.25rem']}
+      >
         weddit
       </Heading>
-      <HStack display={['none', 'flex']}>
+      <HStack>
         <Menu>
-          <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+          <MenuButton mx={2} as={Button} rightIcon={<ChevronDownIcon />}>
             {subredditName || 'Home'}
           </MenuButton>
           <MenuList>
@@ -87,7 +91,7 @@ const Navbar = ({
           </MenuList>
         </Menu>
         {user && (
-          <Button as={Link} to="/submit">
+          <Button display={['none', 'flex']} as={Link} to="/submit">
             Submit
           </Button>
         )}
@@ -100,15 +104,9 @@ const Navbar = ({
             {user.username}
           </MenuButton>
           <MenuList>
-            <Box display={['block', 'none']}>
-              <MenuItem as={Link} to="/">
-                Home
-              </MenuItem>
-              <MenuItem as={Link} to="/submit">
-                Submit
-              </MenuItem>
-              <MenuDivider />
-            </Box>
+            <MenuItem display={['block', 'none']} as={Link} to="/submit">
+              Submit post
+            </MenuItem>
             <MenuItem as={Link} to="/subreddits/create">
               Create subreddit
             </MenuItem>
