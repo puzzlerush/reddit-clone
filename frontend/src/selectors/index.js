@@ -12,9 +12,8 @@ export const createErrorSelector = (requestNames) => (state) => {
   const entries = Object.entries(state.error).filter(([key]) =>
     requestNames.includes(key)
   );
-  const error = entries.length > 0 && entries;
-  if (error[0]) {
-    const { message, response } = error[0][1];
+  if (entries[0]) {
+    const { message, response } = entries[0][1];
     return (response && response.data && response.data.error) || message;
   } else {
     return false;
