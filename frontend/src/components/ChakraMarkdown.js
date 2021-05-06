@@ -1,8 +1,21 @@
 import ReactMarkdown from 'react-markdown';
-import { Link, Code, Text, Heading } from '@chakra-ui/react';
+import gfm from 'remark-gfm';
+import {
+  Link,
+  Code,
+  Text,
+  Heading,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+} from '@chakra-ui/react';
 
 const ChakraMarkdown = ({ children }) => (
   <ReactMarkdown
+    remarkPlugins={[gfm]}
     components={{
       a: (props) => <Link color="blue.400" {...props} />,
       blockquote: (props) => <Code p={1} {...props} />,
@@ -15,6 +28,12 @@ const ChakraMarkdown = ({ children }) => (
       h5: (props) => <Heading as="h5" size="sm" {...props} />,
       h6: (props) => <Heading as="h6" size="xs" {...props} />,
       p: (props) => <Text as="p" my={3} {...props} />,
+      table: Table,
+      tbody: Tbody,
+      td: Td,
+      th: Th,
+      thead: Thead,
+      tr: Tr,
     }}
   >
     {children}
