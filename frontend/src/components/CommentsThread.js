@@ -8,12 +8,16 @@ class CommentsThread extends Component {
     super(props);
 
     this.state = {
-      showReplies: true,
+      showReplies: this.props.comments.map(() => true),
     };
   }
 
-  toggleShowReplies = () =>
-    this.setState((prevState) => ({ showReplies: !prevState.showReplies }));
+  toggleShowReplies = (idx) => {
+    const showReplies = this.state.showReplies.slice();
+    showReplies[idx] = !showReplies[idx];
+    this.setState({ showReplies });
+  }
+    
 
   render() {
     const { showReplies } = this.state;
@@ -44,15 +48,15 @@ class CommentsThread extends Component {
             hasVoted={has_voted}
           />
           {children.length > 0 && (
-            <Button variant="link" onClick={this.toggleShowReplies}>
-              {showReplies
+            <Button variant="link" onClick={() => this.toggleShowReplies(idx)}>
+              {showReplies[idx]
                 ? 'Hide replies'
                 : `Show ${children.length} ${
                     children.length > 1 ? 'replies' : 'reply'
                   }`}
             </Button>
           )}
-          {showReplies && (
+          {showReplies[idx] && (
             <Flex direction="row">
               {children.length > 0 && (
                 <Box
@@ -60,7 +64,7 @@ class CommentsThread extends Component {
                   p={2}
                   role="group"
                   _hover={{ cursor: 'pointer' }}
-                  onClick={this.toggleShowReplies}
+                  onClick={() => this.toggleShowReplies(idx)}
                 >
                   <ThemedBox
                     w={1}
