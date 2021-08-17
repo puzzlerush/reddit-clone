@@ -5,6 +5,7 @@ import {
   Box,
   Stack,
   FormControl,
+  FormErrorMessage,
   Input,
   Textarea,
   Button,
@@ -23,6 +24,11 @@ class CreateSubredditPage extends React.Component {
       description: '',
     };
   }
+
+  isNameValid = (name) => {
+    const nameRegex = new RegExp('^[a-z0-9]+$', 'i');
+    return nameRegex.test(name);
+  };
 
   handleSubmit = async (e) => {
     try {
@@ -47,7 +53,7 @@ class CreateSubredditPage extends React.Component {
         )}
         <form onSubmit={this.handleSubmit}>
           <Stack>
-            <FormControl>
+            <FormControl isInvalid={name.length > 0 && !this.isNameValid(name)}>
               <Input
                 value={name}
                 onChange={(e) => this.setState({ name: e.target.value })}
@@ -55,6 +61,9 @@ class CreateSubredditPage extends React.Component {
                 placeholder="subreddit name"
                 isRequired
               />
+              <FormErrorMessage>
+                Name can only contain alphanumeric characters
+              </FormErrorMessage>
             </FormControl>
             <FormControl>
               <Textarea
@@ -65,7 +74,11 @@ class CreateSubredditPage extends React.Component {
                 placeholder="description (optional)"
               />
             </FormControl>
-            <Button isLoading={isLoading} type="submit">
+            <Button
+              isLoading={isLoading}
+              type="submit"
+              isDisabled={!this.isNameValid(name)}
+            >
               create
             </Button>
           </Stack>

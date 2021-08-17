@@ -18,7 +18,9 @@ router.get('/:name', async (req, res) => {
   try {
     const { name } = req.params
     const selectSubredditStatement = `select * from subreddits where name = $1`
-    const { rows: [subreddit] } = await query(selectSubredditStatement, [name])
+    const {
+      rows: [subreddit],
+    } = await query(selectSubredditStatement, [name])
 
     if (!subreddit) {
       res.status(404).send({ error: 'Could not find subreddit with that name' })
@@ -33,8 +35,13 @@ router.get('/:name', async (req, res) => {
 router.post('/', auth, async (req, res) => {
   try {
     const { name, description } = req.body
-    if (!name) {
-      throw new Error('Must specify subreddit name')
+
+    const nameRegex = new RegExp('^[a-z0-9]+$', 'i')
+
+    if (!nameRegex.test(name)) {
+      throw new Error(
+        'Subreddit name must consist only of alphanumeric characters, and must have length at least 1'
+      )
     }
 
     const insertSubredditStatement = `
@@ -45,18 +52,22 @@ router.post('/', auth, async (req, res) => {
 
     let subreddit
     try {
-      ({ rows: [subreddit] } = await query(insertSubredditStatement, [name, description]))
+      ;({
+        rows: [subreddit],
+      } = await query(insertSubredditStatement, [name, description]))
     } catch (e) {
-      res.status(409).send({ error: 'A subreddit with that name already exists' })
+      res
+        .status(409)
+        .send({ error: 'A subreddit with that name already exists' })
     }
-    
+
     const insertModeratorStatement = `
       insert into moderators(user_id, subreddit_id)
       values($1, $2)
     `
 
     await query(insertModeratorStatement, [req.user.id, subreddit.id])
-    
+
     res.send(subreddit)
   } catch (e) {
     res.status(400).send({ error: e.message })
