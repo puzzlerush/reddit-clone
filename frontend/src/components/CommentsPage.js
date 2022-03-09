@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
   Box,
@@ -42,18 +42,22 @@ const getCommentsWithChildren = (comments) => {
   );
 };
 
-const CommentsPage = ({
-  isLoading,
-  error,
-  post,
-  comments,
-  getPostAndComments,
-  user,
-}) => {
+const { loadingSelector, errorSelector } = createLoadingAndErrorSelector([
+  'GET_POST_AND_COMMENTS',
+]);
+
+const CommentsPage = () => {
   const { id } = useParams();
   useEffect(() => {
-    getPostAndComments(id);
+    dispatch(getPostAndComments(id));
   }, [getPostAndComments, id]);
+
+  const dispatch = useDispatch();
+  const isLoading = useSelector(loadingSelector);
+  const error = useSelector(errorSelector);
+  const post = useSelector(postSelector);
+  const comments = useSelector(commentsSelector);
+  const user = useSelector(userSelector);
 
   if (isLoading) {
     return (
@@ -129,20 +133,4 @@ const CommentsPage = ({
   );
 };
 
-const { loadingSelector, errorSelector } = createLoadingAndErrorSelector([
-  'GET_POST_AND_COMMENTS',
-]);
-
-const mapStateToProps = (state) => ({
-  isLoading: loadingSelector(state),
-  error: errorSelector(state),
-  post: postSelector(state),
-  comments: commentsSelector(state),
-  user: userSelector(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  getPostAndComments: (id) => dispatch(getPostAndComments(id)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(CommentsPage);
+export default CommentsPage;
