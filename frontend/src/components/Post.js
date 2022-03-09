@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import {
@@ -31,12 +31,12 @@ const Post = ({
   numVotes,
   hasVoted,
   numComments,
-  user,
 }) => {
   const { colorMode } = useColorMode();
   const postDetailColor = 'gray.500';
   const postDetailBgColor = colorMode === 'light' ? 'gray.100' : 'gray.600';
   const isTextPost = type === 'text';
+  const user = useSelector(userSelector);
 
   const [isEditing, setIsEditing] = useState(false);
   const deletedText = '[deleted]';
@@ -136,8 +136,4 @@ const Post = ({
   );
 };
 
-const mapStateToProps = (state) => ({
-  user: userSelector(state),
-});
-
-export default connect(mapStateToProps)(Post);
+export default Post;
