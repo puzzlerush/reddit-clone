@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
   HStack,
@@ -10,18 +10,13 @@ import {
 } from '@chakra-ui/react';
 import { startEditComment, startEditPost } from '../actions';
 import { createErrorSelector } from '../selectors';
+const errorSelector = createErrorSelector(['EDIT_POST', 'EDIT_COMMENT']);
 
-const EditBox = ({
-  type = 'post',
-  id,
-  initialText,
-  onClose,
-  error,
-  startEditPost,
-  startEditComment,
-}) => {
+const EditBox = ({ type = 'post', id, initialText, onClose }) => {
+  const dispatch = useDispatch();
   const [value, setValue] = useState(initialText);
   const [isLoading, setIsLoading] = useState(false);
+  const error = useSelector(errorSelector);
 
   const hasError = useRef(error);
 
@@ -39,9 +34,9 @@ const EditBox = ({
     e.preventDefault();
     setIsLoading(true);
     if (type === 'post') {
-      await startEditPost({ id, body: value });
+      await dispatch(startEditPost({ id, body: value }));
     } else {
-      await startEditComment({ id, body: value });
+      await dispatch(startEditComment({ id, body: value }));
     }
     if (!hasError.current) {
       onClose();
@@ -76,15 +71,4 @@ const EditBox = ({
   );
 };
 
-const errorSelector = createErrorSelector(['EDIT_POST', 'EDIT_COMMENT']);
-
-const mapStateToProps = (state) => ({
-  error: errorSelector(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  startEditPost: ({ id, body }) => dispatch(startEditPost({ id, body })),
-  startEditComment: ({ id, body }) => dispatch(startEditComment({ id, body })),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditBox);
+export default EditBox;
