@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
   Box,
@@ -14,11 +14,19 @@ import Post from './Post';
 import { createLoadingAndErrorSelector, postListSelector } from '../selectors';
 import { getPostList } from '../actions/postList';
 
-const PostList = ({ isLoading, error, postList, getPostList }) => {
+const { loadingSelector, errorSelector } = createLoadingAndErrorSelector([
+  'GET_POST_LIST',
+]);
+
+const PostList = () => {
   const { subreddit } = useParams();
+  const isLoading = useSelector(loadingSelector);
+  const error = useSelector(errorSelector);
+  const postList = useSelector(postListSelector);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getPostList({ subreddit });
+    dispatch(getPostList({ subreddit }));
   }, [getPostList, subreddit]);
 
   if (isLoading) {
@@ -75,18 +83,4 @@ const PostList = ({ isLoading, error, postList, getPostList }) => {
   );
 };
 
-const { loadingSelector, errorSelector } = createLoadingAndErrorSelector([
-  'GET_POST_LIST',
-]);
-
-const mapStateToProps = (state) => ({
-  isLoading: loadingSelector(state),
-  error: errorSelector(state),
-  postList: postListSelector(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  getPostList: (filters) => dispatch(getPostList(filters)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PostList);
+export default PostList;
