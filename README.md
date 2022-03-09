@@ -6,7 +6,18 @@ Deployed at https://weddit.netlify.app/
 
 Note: The backend is hosted on heroku free tier (https://weddit-backend.herokuapp.com/), which may lead to slow cold starts.
 
+## Refactor & update plan
+
+- [ ] Upgrade all packages
+- [ ] Get rid of class components
+- [ ] Get rid of redux's legacy API and start using hooks
+- [ ] Migrate to redux-toolkit
+- [ ] Using styled components
+- [ ] Migrate to typescript
+- [ ] Generate changelog
+
 ## Features
+
 - JWT authentication
 - Create, update, and delete posts and comments
 - Upvote/downvote posts and comments
@@ -18,6 +29,7 @@ Note: The backend is hosted on heroku free tier (https://weddit-backend.herokuap
 - ... and more to come!
 
 ## Screenshots
+
 <p align="center">
   <a href="#">
     <img src="./screenshot.png" alt="Comments page for a post">
@@ -25,6 +37,7 @@ Note: The backend is hosted on heroku free tier (https://weddit-backend.herokuap
 </p>
 
 ## Installation
+
 1. Clone this repository
 
 ```
@@ -54,6 +67,7 @@ mkdir config
 ```
 
 5. Configure environment variables. Create a `dev.env` file in the config folder, and paste the following (filling in your own postgres password and JWT secret)
+
 ```
 PORT=5000
 PG_HOST=localhost
@@ -75,6 +89,7 @@ npm run db-migrate up
 ```
 
 ## Usage
+
 1. Start server
 
 ```
@@ -83,6 +98,7 @@ npm run dev
 ```
 
 2. Start client
+
 ```
 cd frontend
 npm start

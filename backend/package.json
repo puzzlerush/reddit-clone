@@ -13,21 +13,23 @@
     "db-migrate": "node node_modules/db-migrate/bin/db-migrate",
     "db-migrate-dev": "env-cmd -f ./config/dev.env npm run db-migrate",
     "start": "node src/index.js",
-    "heroku-postbuild": "npm run db-migrate -- up --env prod"
+    "heroku-postbuild": "npm run db-migrate -- up --env prod",
+    "upgrade:all": "yarn-upgrade-all"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
-    "db-migrate": "^0.11.12",
+    "db-migrate": "^0.11.13",
     "db-migrate-pg": "^1.2.2",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
-    "pg": "^8.5.1"
+    "pg": "^8.7.3"
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.15",
+    "yarn-upgrade-all": "^0.6.1"
   }
 }

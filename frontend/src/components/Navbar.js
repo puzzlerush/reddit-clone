@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Box,
   Flex,
   Heading,
   Spacer,
@@ -20,28 +19,32 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import ThemedBox from './ThemedBox';
+
 import {
   userSelector,
   subredditsSelector,
   createLoadingAndErrorSelector,
 } from '../selectors';
+
 import { startLogout } from '../actions/auth';
 import { getSubreddits } from '../actions/subreddits';
 import LoginAndRegisterButtons from './LoginAndRegisterButtons';
 
-const Navbar = ({
-  user,
-  subreddits,
-  isLoading,
-  error,
-  startLogout,
-  getSubreddits,
-}) => {
+const { loadingSelector, errorSelector } = createLoadingAndErrorSelector([
+  'GET_SUBREDDITS',
+]);
+
+const Navbar = () => {
   const location = useLocation();
   const subredditName = location.pathname.match(/r\/[^\/]+/);
+  const user = useSelector(userSelector);
+  const subreddits = useSelector(subredditsSelector);
+  const isLoading = useSelector(loadingSelector);
+  const error = useSelector(errorSelector);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getSubreddits();
+    dispatch(getSubreddits());
   }, []);
 
   return (
@@ -112,7 +115,7 @@ const Navbar = ({
             </MenuItem>
             <MenuItem
               onClick={async () => {
-                await startLogout();
+                await dispatch(startLogout());
               }}
             >
               Logout
@@ -127,20 +130,4 @@ const Navbar = ({
   );
 };
 
-const { loadingSelector, errorSelector } = createLoadingAndErrorSelector([
-  'GET_SUBREDDITS',
-]);
-
-const mapStateToProps = (state) => ({
-  isLoading: loadingSelector(state),
-  error: errorSelector(state),
-  subreddits: subredditsSelector(state),
-  user: userSelector(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  startLogout: () => dispatch(startLogout()),
-  getSubreddits: () => dispatch(getSubreddits()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
+export default Navbar;
