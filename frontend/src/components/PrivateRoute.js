@@ -1,9 +1,10 @@
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Route, Redirect, useLocation } from 'react-router-dom';
 import { tokenSelector } from '../selectors';
 
-const PrivateRoute = ({ token, children, ...rest }) => {
+const PrivateRoute = ({ children, ...rest }) => {
   const location = useLocation();
+  const token = useSelector(tokenSelector);
   return (
     <Route {...rest}>
       {token ? (
@@ -23,8 +24,4 @@ const PrivateRoute = ({ token, children, ...rest }) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  token: tokenSelector(state),
-});
-
-export default connect(mapStateToProps)(PrivateRoute);
+export default PrivateRoute;
