@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import moment from 'moment';
 import {
@@ -28,7 +28,6 @@ const Comment = ({
   author,
   numVotes,
   hasVoted,
-  user,
 }) => {
   const { colorMode } = useColorMode();
   const commentDetailColor = 'gray.500';
@@ -39,6 +38,8 @@ const Comment = ({
   const history = useHistory();
   const location = useLocation();
   const deletedText = '[deleted]';
+  const user = useSelector(userSelector);
+
   return (
     <ThemedBox
       p={4}
@@ -153,8 +154,4 @@ const Comment = ({
   );
 };
 
-const mapStateToProps = (state) => ({
-  user: userSelector(state),
-});
-
-export default connect(mapStateToProps)(Comment);
+export default Comment;
