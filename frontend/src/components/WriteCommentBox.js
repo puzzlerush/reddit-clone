@@ -1,5 +1,5 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import {
   Box,
   HStack,
@@ -11,82 +11,62 @@ import {
 import { userSelector, createLoadingAndErrorSelector } from '../selectors';
 import { submitComment } from '../actions/comments';
 
-class WriteCommentBox extends React.Component {
-  constructor(props) {
-    super(props);
+const { loadingSelector, errorSelector } = createLoadingAndErrorSelector(
+  ['SUBMIT_COMMENT'],
+  false
+);
+const WriteCommentBox = (props) => {
+  const dispatch = useDispatch();
+  const [body, setBody] = useState('');
+  const [hasError, setHasError] = useState(false);
+  const isLoading = useSelector(loadingSelector);
+  const error = useSelector(errorSelector);
+  const user = useSelector(userSelector);
 
-    this.state = {
-      body: '',
-      hasError: false,
-    };
-  }
-
-  handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { body } = this.state;
-    const { postId, parentCommentId, submitComment, onClose } = this.props;
-    await submitComment({
-      body,
-      post_id: postId,
-      parent_comment_id: parentCommentId,
-    });
-    const { error } = this.props;
-    this.setState({ body: '' });
+    const { postId, parentCommentId, onClose } = props;
+    await dispatch(
+      submitComment({
+        body,
+        post_id: postId,
+        parent_comment_id: parentCommentId,
+      })
+    );
+    setBody('');
     if (error) {
-      this.setState({ hasError: true });
+      setHasError(true);
     }
     if (!error && onClose) {
       onClose();
     }
   };
 
-  render() {
-    const { body, hasError } = this.state;
-    const { type = 'comment', isLoading, error, user, onClose } = this.props;
-    const isReply = type === 'reply';
-    return (
-      <Box>
-        <form onSubmit={this.handleSubmit}>
-          <FormControl mb={3} isInvalid={error && hasError}>
-            <Textarea
-              value={body}
-              onChange={(e) =>
-                this.setState({
-                  body: e.target.value,
-                })
-              }
-              variant="filled"
-              isDisabled={!user}
-              placeholder="what are your thoughts?"
-              rows={5}
-            />
-            <FormErrorMessage>{error}</FormErrorMessage>
-          </FormControl>
-          <HStack>
-            <Button isDisabled={!body} isLoading={isLoading} type="submit">
-              {type}
-            </Button>
-            {isReply && onClose && <Button onClick={onClose}>cancel</Button>}
-          </HStack>
-        </form>
-      </Box>
-    );
-  }
-}
+  const { type = 'comment', onClose } = props;
+  const isReply = type === 'reply';
+  return (
+    <Box>
+      <form onSubmit={handleSubmit}>
+        <FormControl mb={3} isInvalid={error && hasError}>
+          <Textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            variant="filled"
+            isDisabled={!user}
+            placeholder="what are your thoughts?"
+            rows={5}
+          />
+          <FormErrorMessage>{error}</FormErrorMessage>
+        </FormControl>
+        <HStack>
+          <Button isDisabled={!body} isLoading={isLoading} type="submit">
+            {type}
+          </Button>
+          {isReply && onClose && <Button onClick={onClose}>cancel</Button>}
+        </HStack>
+      </form>
+    </Box>
+  );
+};
 
-const { loadingSelector, errorSelector } = createLoadingAndErrorSelector(
-  ['SUBMIT_COMMENT'],
-  false
-);
-
-const mapStateToProps = (state) => ({
-  isLoading: loadingSelector(state),
-  error: errorSelector(state),
-  user: userSelector(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  submitComment: (commentDetails) => dispatch(submitComment(commentDetails)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(WriteCommentBox);
+export default WriteCommentBox;
