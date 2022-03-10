@@ -1,17 +1,11 @@
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Flex, Text, IconButton } from '@chakra-ui/react';
 import { TriangleUpIcon, TriangleDownIcon } from '@chakra-ui/icons';
 import { submitVote } from '../actions';
 
-const UpvoteBar = ({
-  type = 'post',
-  size = 6,
-  numVotes,
-  id,
-  voteValue,
-  submitVote,
-}) => {
+const UpvoteBar = ({ type = 'post', size = 6, numVotes, id, voteValue }) => {
+  const dispatch = useDispatch();
   const upvoteColor = 'orange.500';
   const downvoteColor = 'blue.500';
 
@@ -47,7 +41,7 @@ const UpvoteBar = ({
       voteDetails.voteValue = 1;
       voteDetails.newNumVotes = numVotes + 2;
     }
-    submitVote(voteDetails);
+    dispatch(submitVote(voteDetails));
   };
 
   const handleDownvote = () => {
@@ -62,7 +56,7 @@ const UpvoteBar = ({
       voteDetails.voteValue = 0;
       voteDetails.newNumVotes = numVotes + 1;
     }
-    submitVote(voteDetails);
+    dispatch(submitVote(voteDetails));
   };
 
   return (
@@ -99,9 +93,4 @@ UpvoteBar.propTypes = {
   submitVote: PropTypes.func,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  submitVote: (type, id, voteValue, newNumVotes) =>
-    dispatch(submitVote(type, id, voteValue, newNumVotes)),
-});
-
-export default connect(undefined, mapDispatchToProps)(UpvoteBar);
+export default UpvoteBar;
