@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import {
   Box,
   Stack,
@@ -24,10 +24,11 @@ const LoginPage = (props) => {
   const isLoading = useSelector(loadingSelector);
   const error = useSelector(errorSelector);
   const dispatch = useDispatch();
+  const history = useHistory();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { location, history } = props;
     await dispatch(startLogin(username, password));
     if (!error) {
       history.push(
@@ -36,7 +37,6 @@ const LoginPage = (props) => {
     }
   };
 
-  const { location } = props;
   const requireAuth = location && location.state && location.state.requireAuth;
 
   return (
@@ -88,4 +88,4 @@ const LoginPage = (props) => {
   );
 };
 
-export default withRouter(LoginPage);
+export default LoginPage;

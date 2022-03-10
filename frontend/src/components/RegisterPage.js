@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, useHistory, useLocation } from 'react-router-dom';
 import {
   Box,
   Stack,
@@ -14,38 +14,28 @@ import {
 import { startRegister } from '../actions/auth';
 import { createLoadingAndErrorSelector } from '../selectors';
 
-class RegisterPage extends React.Component {
-  constructor(props) {
-    super(props);
+const RegisterPage = (props) => {
+  const history = useHistory();
+  const location = useLocation();
 
-    this.state = {
-      username: '',
-      password: '',
-      confirmPassword: '',
-      doNotMatchError: '',
-    };
-  }
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [doNotMatchError, setDoNotMatchError] = useState('');
 
-  componentDidUpdate(prevProps, prevState) {
-    const { password, confirmPassword } = this.state;
-    if (
-      prevState.password !== password ||
-      prevState.confirmPassword !== confirmPassword
-    ) {
-      this.setState({ doNotMatchError: '' });
-    }
-  }
+  useEffect(() => {
+    setDoNotMatchError('');
+  }, [password, confirmPassword]);
 
-  handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      const { username, password, confirmPassword } = this.state;
-      const { startRegister, history, location } = this.props;
+      const { startRegister } = props;
       if (password !== confirmPassword) {
-        return this.setState({ doNotMatchError: 'Passwords do not match' });
+        return setDoNotMatchError('Passwords do not match');
       }
       await startRegister(username, password);
-      const { error } = this.props;
+      const { error } = props;
       if (!error) {
         history.push(
           (location && location.state && location.state.prevPathname) || '/'
@@ -54,67 +44,62 @@ class RegisterPage extends React.Component {
     } catch (e) {}
   };
 
-  render() {
-    const { username, password, confirmPassword, doNotMatchError } = this.state;
-    const { isLoading, error } = this.props;
-    return (
-      <Box w={300} m="auto">
-        {error && (
-          <Alert status="error" mb={2}>
-            <AlertIcon />
-            {error}
-          </Alert>
-        )}
-        <form onSubmit={this.handleSubmit}>
-          <Stack spacing={3}>
-            <FormControl>
-              <Input
-                value={username}
-                onChange={(e) => this.setState({ username: e.target.value })}
-                id="username-input"
-                variant="filled"
-                type="text"
-                placeholder="username"
-                size="md"
-                isRequired
-              />
-            </FormControl>
-            <FormControl>
-              <Input
-                value={password}
-                onChange={(e) => this.setState({ password: e.target.value })}
-                id="password-input"
-                variant="filled"
-                type="password"
-                placeholder="password"
-                size="md"
-                isRequired
-              />
-            </FormControl>
-            <FormControl isInvalid={doNotMatchError}>
-              <Input
-                value={confirmPassword}
-                onChange={(e) =>
-                  this.setState({ confirmPassword: e.target.value })
-                }
-                id="confirm-password-input"
-                variant="filled"
-                type="password"
-                placeholder="confirm password"
-                size="md"
-                isRequired
-              />
-              <FormErrorMessage>{doNotMatchError}</FormErrorMessage>
-            </FormControl>
-            <Button type="submit" isLoading={isLoading}>
-              Register
-            </Button>
-          </Stack>
-        </form>
-      </Box>
-    );
-  }
-}
+  const { isLoading, error } = props;
+  return (
+    <Box w={300} m="auto">
+      {error && (
+        <Alert status="error" mb={2}>
+          <AlertIcon />
+          {error}
+        </Alert>
+      )}
+      <form onSubmit={handleSubmit}>
+        <Stack spacing={3}>
+          <FormControl>
+            <Input
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              id="username-input"
+              variant="filled"
+              type="text"
+              placeholder="username"
+              size="md"
+              isRequired
+            />
+          </FormControl>
+          <FormControl>
+            <Input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              id="password-input"
+              variant="filled"
+              type="password"
+              placeholder="password"
+              size="md"
+              isRequired
+            />
+          </FormControl>
+          <FormControl isInvalid={doNotMatchError}>
+            <Input
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              id="confirm-password-input"
+              variant="filled"
+              type="password"
+              placeholder="confirm password"
+              size="md"
+              isRequired
+            />
+            <FormErrorMessage>{doNotMatchError}</FormErrorMessage>
+          </FormControl>
+          <Button type="submit" isLoading={isLoading}>
+            Register
+          </Button>
+        </Stack>
+      </form>
+    </Box>
+  );
+};
 
 const { loadingSelector, errorSelector } = createLoadingAndErrorSelector(
   ['REGISTER'],
