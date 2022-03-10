@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { withRouter, useHistory, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
 import {
   Box,
   Stack,
@@ -14,14 +14,18 @@ import {
 import { startRegister } from '../actions/auth';
 import { createLoadingAndErrorSelector } from '../selectors';
 
-const RegisterPage = (props) => {
+const RegisterPage = () => {
   const history = useHistory();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [doNotMatchError, setDoNotMatchError] = useState('');
+
+  const isLoading = useSelector(loadingSelector);
+  const error = useSelector(errorSelector);
 
   useEffect(() => {
     setDoNotMatchError('');
@@ -30,12 +34,10 @@ const RegisterPage = (props) => {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      const { startRegister } = props;
       if (password !== confirmPassword) {
         return setDoNotMatchError('Passwords do not match');
       }
-      await startRegister(username, password);
-      const { error } = props;
+      await dispatch(startRegister(username, password));
       if (!error) {
         history.push(
           (location && location.state && location.state.prevPathname) || '/'
@@ -44,7 +46,6 @@ const RegisterPage = (props) => {
     } catch (e) {}
   };
 
-  const { isLoading, error } = props;
   return (
     <Box w={300} m="auto">
       {error && (
@@ -106,16 +107,4 @@ const { loadingSelector, errorSelector } = createLoadingAndErrorSelector(
   false
 );
 
-const mapStateToProps = (state) => ({
-  isLoading: loadingSelector(state),
-  error: errorSelector(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  startRegister: (username, password) =>
-    dispatch(startRegister(username, password)),
-});
-
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(RegisterPage)
-);
+export default RegisterPage;
