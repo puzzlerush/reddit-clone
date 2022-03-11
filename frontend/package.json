@@ -31,7 +31,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "upgrade:all": "yarn-upgrade-all"
+    "upgrade:all": "yarn-upgrade-all",
+    "generate:changelog": "generate-changelog"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -49,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "generate-changelog": "^1.8.0",
     "yarn-upgrade-all": "^0.6.1"
   }
 }

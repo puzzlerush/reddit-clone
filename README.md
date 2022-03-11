@@ -8,9 +8,9 @@ Note: The backend is hosted on heroku free tier (https://weddit-backend.herokuap
 
 ## Refactor & update plan
 
-- [ ] Upgrade all packages
-- [ ] Get rid of class components
-- [ ] Get rid of redux's legacy API and start using hooks
+- [x] Upgrade all packages
+- [x] Get rid of class components
+- [x] Get rid of redux's legacy API and start using hooks
 - [ ] Migrate to redux-toolkit
 - [ ] Using styled components
 - [ ] Migrate to typescript
