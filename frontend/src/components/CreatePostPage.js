@@ -40,7 +40,7 @@ const CreatePostPage = (props) => {
 
   useEffect(() => {
     dispatch(getSubreddits());
-  }, []);
+  }, [dispatch]);
 
   const handleSubmit = async (e) => {
     try {

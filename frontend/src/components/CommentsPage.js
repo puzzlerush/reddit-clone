@@ -48,16 +48,16 @@ const { loadingSelector, errorSelector } = createLoadingAndErrorSelector([
 
 const CommentsPage = () => {
   const { id } = useParams();
-  useEffect(() => {
-    dispatch(getPostAndComments(id));
-  }, [getPostAndComments, id]);
-
   const dispatch = useDispatch();
   const isLoading = useSelector(loadingSelector);
   const error = useSelector(errorSelector);
   const post = useSelector(postSelector);
   const comments = useSelector(commentsSelector);
   const user = useSelector(userSelector);
+
+  useEffect(() => {
+    dispatch(getPostAndComments(id));
+  }, [id, dispatch]);
 
   if (isLoading) {
     return (

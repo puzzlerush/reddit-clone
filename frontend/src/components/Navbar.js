@@ -36,7 +36,7 @@ const { loadingSelector, errorSelector } = createLoadingAndErrorSelector([
 
 const Navbar = () => {
   const location = useLocation();
-  const subredditName = location.pathname.match(/r\/[^\/]+/);
+  const subredditName = location.pathname.match(/r\/[^/]+/);
   const user = useSelector(userSelector);
   const subreddits = useSelector(subredditsSelector);
   const isLoading = useSelector(loadingSelector);
@@ -45,7 +45,7 @@ const Navbar = () => {
 
   useEffect(() => {
     dispatch(getSubreddits());
-  }, []);
+  }, [dispatch]);
 
   return (
     <ThemedBox

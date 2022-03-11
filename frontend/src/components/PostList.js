@@ -27,7 +27,7 @@ const PostList = () => {
 
   useEffect(() => {
     dispatch(getPostList({ subreddit }));
-  }, [getPostList, subreddit]);
+  }, [subreddit, dispatch]);
 
   if (isLoading) {
     return (
