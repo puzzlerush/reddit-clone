@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import moment from 'moment';
 import {
