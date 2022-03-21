@@ -1,10 +1,14 @@
-const subredditsReducer = (state = [], action) => {
-  switch (action.type) {
-    case 'SET_SUBREDDITS':
-      return action.subreddits;
-    default:
-      return state;
-  }
-};
+import { createSlice } from '@reduxjs/toolkit';
 
-export default subredditsReducer;
+const subredditsSlice = createSlice({
+  name: 'subreddits',
+  initialState: [],
+  reducers: {
+    setSubreddits: (state, action) => {
+      return action.payload;
+    },
+  },
+});
+
+export const { setSubreddits } = subredditsSlice.actions;
+export default subredditsSlice.reducer;
