@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { Formik } from 'formik';
 import {
   Box,
   Stack,
@@ -15,12 +16,10 @@ import {
 import { createLoadingAndErrorSelector } from '../selectors';
 import { createSubreddit } from '../actions/subreddits';
 
-const CreateSubredditPage = (props) => {
+const CreateSubredditPage = () => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
   const isLoading = useSelector(loadingSelector);
   const error = useSelector(errorSelector);
 
@@ -29,9 +28,8 @@ const CreateSubredditPage = (props) => {
     return nameRegex.test(name);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async ({ name, description }) => {
     try {
-      e.preventDefault();
       const { name: subredditName } = await dispatch(
         createSubreddit(name, description)
       );
@@ -47,38 +45,49 @@ const CreateSubredditPage = (props) => {
           {error}
         </Alert>
       )}
-      <form onSubmit={handleSubmit}>
-        <Stack>
-          <FormControl isInvalid={name.length > 0 && !isNameValid(name)}>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              variant="filled"
-              placeholder="subreddit name"
-              isRequired
-            />
-            <FormErrorMessage>
-              Name can only contain alphanumeric characters
-            </FormErrorMessage>
-          </FormControl>
-          <FormControl>
-            <Textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              variant="filled"
-              rows={5}
-              placeholder="description (optional)"
-            />
-          </FormControl>
-          <Button
-            isLoading={isLoading}
-            type="submit"
-            isDisabled={!isNameValid(name)}
-          >
-            create
-          </Button>
-        </Stack>
-      </form>
+      <Formik
+        onSubmit={handleSubmit}
+        initialValues={{ name: '', description: '' }}
+      >
+        {({ values, handleSubmit, handleChange, isSubmitting }) => (
+          <form onSubmit={handleSubmit}>
+            <Stack>
+              <FormControl
+                isInvalid={values.name.length > 0 && !isNameValid(values.name)}
+              >
+                <Input
+                  name="name"
+                  value={values.name}
+                  onChange={handleChange}
+                  variant="filled"
+                  placeholder="subreddit name"
+                  isRequired
+                />
+                <FormErrorMessage>
+                  Name can only contain alphanumeric characters
+                </FormErrorMessage>
+              </FormControl>
+              <FormControl>
+                <Textarea
+                  name="description"
+                  value={values.description}
+                  onChange={handleChange}
+                  variant="filled"
+                  rows={5}
+                  placeholder="description (optional)"
+                />
+              </FormControl>
+              <Button
+                isLoading={isLoading}
+                type="submit"
+                isDisabled={!isNameValid(values.name) || isSubmitting}
+              >
+                create
+              </Button>
+            </Stack>
+          </form>
+        )}
+      </Formik>
     </Box>
   );
 };
