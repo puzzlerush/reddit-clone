@@ -1,4 +1,3 @@
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import authReducer from '../reducers/auth';
 import loadingReducer from '../reducers/loading';
@@ -8,14 +7,11 @@ import postListReducer from '../reducers/postList';
 import commentsReducer from '../reducers/comments';
 import { saveState } from '../localStorage';
 import subredditsReducer from '../reducers/subreddits';
+import { configureStore } from '@reduxjs/toolkit';
 
-const composeEnhancers =
-  (typeof window !== 'undefined' &&
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
-  compose;
-
-const configureStore = () => {
-  const rootReducer = combineReducers({
+const store = configureStore({
+  devTools: true,
+  reducer: {
     auth: authReducer,
     loading: loadingReducer,
     error: errorReducer,
@@ -23,20 +19,12 @@ const configureStore = () => {
     postList: postListReducer,
     comments: commentsReducer,
     subreddits: subredditsReducer,
-  });
+  },
+  middleware: [thunk],
+});
 
-  const store = createStore(
-    rootReducer,
-    composeEnhancers(applyMiddleware(thunk))
-  );
-
-  store.subscribe(() => {
-    saveState(store.getState().auth, 'authState');
-  });
-
-  return store;
-};
-
-const store = configureStore();
+store.subscribe(() => {
+  saveState(store.getState().auth, 'authState');
+});
 
 export default store;

@@ -14,7 +14,11 @@ Note: The backend is hosted on heroku free tier (https://weddit-backend.herokuap
 - [ ] Migrate to redux-toolkit
 - [ ] Using styled components
 - [ ] Migrate to typescript
-- [ ] Generate changelog
+- [x] Generate changelog
+- [ ] Handle forms with formik
+- [ ] Write docs&comment on code
+- [ ] Cover with tests
+- [ ] New project structure with scenes
 
 ## Features
 
