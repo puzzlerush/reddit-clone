@@ -1,3 +1,4 @@
+// Selector makers
 export const createLoadingSelector =
   (requestNames, defaultLoading = true) =>
   (state) => {
@@ -29,14 +30,10 @@ export const createLoadingAndErrorSelector = (
   return { loadingSelector, errorSelector };
 };
 
+// Regular selectors
 export const postSelector = (state) => state.post;
-
 export const postListSelector = (state) => state.postList;
-
 export const commentsSelector = (state) => state.comments;
-
 export const userSelector = (state) => state.auth.user;
-
 export const tokenSelector = (state) => state.auth.token;
-
 export const subredditsSelector = (state) => state.subreddits;

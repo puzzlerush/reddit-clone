@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Flex, Button } from '@chakra-ui/react';
 import Comment from './Comment';
 import ThemedBox from './ThemedBox';
