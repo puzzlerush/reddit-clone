@@ -13,7 +13,7 @@
     "@testing-library/user-event": "^14.0.4",
     "axios": "^0.26.1",
     "formik": "^2.2.9",
-    "framer-motion": "^6.2.8",
+    "framer-motion": "3.10.6",
     "moment": "^2.29.1",
     "prop-types": "^15.8.1",
     "react": "^18.0.0",

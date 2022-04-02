@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Stack,
@@ -22,7 +22,7 @@ import {
 import { getSubreddits } from '../actions/subreddits';
 import { submitPost } from '../actions/post';
 
-const CreatePostPage = (props) => {
+const CreatePostPage = () => {
   const [postType, setPostType] = useState('text');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -36,7 +36,7 @@ const CreatePostPage = (props) => {
   const subreddits = useSelector(subredditsSelector);
 
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getSubreddits());
@@ -53,8 +53,10 @@ const CreatePostPage = (props) => {
           subreddit,
         })
       );
-      history.push(`/r/${subreddit}/comments/${id}`);
-    } catch (err) {}
+      navigate(`/r/${subreddit}/comments/${id}`);
+    } catch (err) {
+      throw new Error(err);
+    }
   };
 
   return (

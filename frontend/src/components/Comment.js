@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import moment from 'moment';
 import {
   Box,
@@ -36,7 +36,7 @@ const Comment = ({
 
   const [showWriteReply, setShowWriteReply] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const deletedText = '[deleted]';
   const user = useSelector(userSelector);
@@ -103,7 +103,7 @@ const Comment = ({
                 if (user) {
                   setShowWriteReply(!showWriteReply);
                 } else {
-                  history.push({
+                  navigate.push({
                     pathname: '/login',
                     state: {
                       requireAuth: 'Log in to reply to comments',

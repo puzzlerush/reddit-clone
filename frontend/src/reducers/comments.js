@@ -6,11 +6,12 @@ const commentsReducer = (state = [], action) => {
       return state.map((comment) =>
         comment.id === action.id ? { ...comment, ...action.updates } : comment
       );
-    case 'DELETE_COMMENT':
+    case 'DELETE_COMMENT': {
       const deletedFields = { body: null, author_name: null };
       return state.map((comment) =>
         comment.id === action.id ? { ...comment, ...deletedFields } : comment
       );
+    }
     default:
       return state;
   }

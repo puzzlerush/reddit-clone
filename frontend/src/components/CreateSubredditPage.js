@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
 import {
   Box,
@@ -17,7 +17,7 @@ import { createLoadingAndErrorSelector } from '../selectors';
 import { createSubreddit } from '../actions/subreddits';
 
 const CreateSubredditPage = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const isLoading = useSelector(loadingSelector);
@@ -33,8 +33,10 @@ const CreateSubredditPage = () => {
       const { name: subredditName } = await dispatch(
         createSubreddit(name, description)
       );
-      history.push(`/r/${subredditName}`);
-    } catch (e) {}
+      navigate(`/r/${subredditName}`);
+    } catch (e) {
+      throw new Error(e);
+    }
   };
 
   return (

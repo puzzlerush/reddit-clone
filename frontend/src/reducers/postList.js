@@ -6,11 +6,12 @@ const postListReducer = (state = [], action) => {
       return state.map((post) =>
         post.id === action.id ? { ...post, ...action.updates } : post
       );
-    case 'DELETE_POST':
+    case 'DELETE_POST': {
       const deletedFields = { title: null, body: null, author_name: null };
       return state.map((post) =>
         post.id === action.id ? { ...post, ...deletedFields } : post
       );
+    }
     default:
       return state;
   }

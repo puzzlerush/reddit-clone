@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Stack,
@@ -15,7 +15,7 @@ import { startRegister } from '../actions/auth';
 import { createLoadingAndErrorSelector } from '../selectors';
 
 const RegisterPage = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
 
@@ -39,11 +39,13 @@ const RegisterPage = () => {
       }
       await dispatch(startRegister(username, password));
       if (!error) {
-        history.push(
+        navigate(
           (location && location.state && location.state.prevPathname) || '/'
         );
       }
-    } catch (e) {}
+    } catch (e) {
+      throw new Error(e);
+    }
   };
 
   return (

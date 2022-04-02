@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Stack,
@@ -18,20 +18,20 @@ const { loadingSelector, errorSelector } = createLoadingAndErrorSelector(
   false
 );
 
-const LoginPage = (props) => {
+const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const isLoading = useSelector(loadingSelector);
   const error = useSelector(errorSelector);
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     await dispatch(startLogin(username, password));
     if (!error) {
-      history.push(
+      navigate(
         (location && location.state && location.state.prevPathname) || '/'
       );
     }
