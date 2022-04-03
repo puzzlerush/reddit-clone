@@ -10,7 +10,7 @@ import {
   Text,
   CircularProgress,
 } from '@chakra-ui/react';
-import Post from './Post';
+import Post from '../components/Post';
 import { createLoadingAndErrorSelector, postListSelector } from '../selectors';
 import { getPostList } from '../actions/postList';
 

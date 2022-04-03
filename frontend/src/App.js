@@ -8,7 +8,7 @@ import CommentsPage from './pages/CommentsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CreatePostPage from './pages/CreatePostPage';
-import PostList from './components/PostList';
+import PostListPage from './pages/PostListPage';
 import ThemedBox from './components/ThemedBox';
 import CreateSubredditPage from './pages/CreateSubredditPage';
 import { tokenSelector } from './selectors';
@@ -38,7 +38,8 @@ const App = () => {
           <Flex justifyContent="center">
             <Box width={['95%', '80%', '70%', '60%']} mb={10}>
               <Routes>
-                <Route path="/" element={<PostList />} />
+                <Route path="/" element={<PostListPage />} />
+                <Route path="/r/:subreddit" element={<PostListPage />} />
                 <Route
                   path="/r/:subreddit/comments/:id"
                   element={<CommentsPage />}
@@ -59,7 +60,6 @@ const App = () => {
                   path="/subreddits/create"
                   element={token ? <CreateSubredditPage /> : <Forbidden />}
                 />
-                <Route path="/r/:subreddit" element={<PostList />} />
               </Routes>
             </Box>
           </Flex>
