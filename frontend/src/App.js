@@ -4,13 +4,13 @@ import { useSelector } from 'react-redux';
 import { ChakraProvider, Box, Flex } from '@chakra-ui/react';
 import theme from './theme';
 import Navbar from './components/Navbar';
-import CommentsPage from './components/CommentsPage';
-import LoginPage from './components/LoginPage';
-import RegisterPage from './components/RegisterPage';
-import CreatePostPage from './components/CreatePostPage';
+import CommentsPage from './pages/CommentsPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import CreatePostPage from './pages/CreatePostPage';
 import PostList from './components/PostList';
 import ThemedBox from './components/ThemedBox';
-import CreateSubredditPage from './components/CreateSubredditPage';
+import CreateSubredditPage from './pages/CreateSubredditPage';
 import { tokenSelector } from './selectors';
 
 const GoHome = () => <Navigate to="/" replace />;
@@ -38,6 +38,7 @@ const App = () => {
           <Flex justifyContent="center">
             <Box width={['95%', '80%', '70%', '60%']} mb={10}>
               <Routes>
+                <Route path="/" element={<PostList />} />
                 <Route
                   path="/r/:subreddit/comments/:id"
                   element={<CommentsPage />}
@@ -59,7 +60,6 @@ const App = () => {
                   element={token ? <CreateSubredditPage /> : <Forbidden />}
                 />
                 <Route path="/r/:subreddit" element={<PostList />} />
-                <Route path="/" element={<PostList />} />
               </Routes>
             </Box>
           </Flex>

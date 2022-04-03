@@ -9,7 +9,6 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    'plugin:testing-library/react',
   ],
   parserOptions: {
     ecmaFeatures: {
@@ -20,8 +19,6 @@ module.exports = {
   },
   plugins: ['react', 'testing-library'],
   rules: {
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
     'react/prop-types': 'warn',
   },
 };

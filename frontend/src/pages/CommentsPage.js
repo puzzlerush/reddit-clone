@@ -10,10 +10,10 @@ import {
   AlertIcon,
   CircularProgress,
 } from '@chakra-ui/react';
-import Post from './Post';
-import CommentsThread from './CommentsThread';
-import WriteCommentBox from './WriteCommentBox';
-import LoginAndRegisterButtons from './LoginAndRegisterButtons';
+import Post from '../components/Post';
+import CommentsThread from '../components/CommentsThread';
+import WriteCommentBox from '../components/WriteCommentBox';
+import LoginAndRegisterButtons from '../components/LoginAndRegisterButtons';
 import {
   createLoadingAndErrorSelector,
   postSelector,
